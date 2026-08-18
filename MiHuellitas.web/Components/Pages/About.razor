@@ -1,0 +1,34 @@
+<section class="about">
+    <div class="about-card">
+        <div class="about-card-ayuda">
+            <h4>¿En que nos ayudas?</h4>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque culpa maiores non, eius neque cum enim, inventore molestiae doloremque, accusantium explicabo temporibus? Provident ipsa eos fugiat. Nobis perspiciatis officia repudiandae?</p>
+        </div>
+        <div class="about-card-img">
+            @foreach(var img in images){
+                <img @key="img.key" src="@img.value" class="@img.key"/>
+            }
+        </div>
+        <div class="about-card-ventajas">
+            <h4>Mira las ventajas</h4>
+            <ul>
+                <li>1</li>
+                <li>2</li>
+                <li>3</li>
+                <li>4</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+@code{
+
+    int count = 0;
+
+    List<(string key, string value)>  images = new List<(string key, string value)>{
+        ("img1", "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=800&q=80"),
+        ("img2", "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&w=800&q=80"),
+        ("img3", "https://images.unsplash.com/photo-1593134257782-e89567b7718a?auto=format&fit=crop&w=800&q=80")
+    };
+    
+}

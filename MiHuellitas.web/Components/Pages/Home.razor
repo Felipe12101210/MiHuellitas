@@ -1,0 +1,73 @@
+﻿@page "/"
+@using MiHuellitas.shared.Models
+
+
+<main>
+    <section class="replay-video">
+        <video autoplay muted loop playsinline>
+            <source src="videos/Video1_MH.mp4" type="video/mp4">
+        </video>
+    </section>
+
+    <section class="cards">
+        <div class="cards-item">
+            <h1>¿Que quieres hacer hoy?</h1>
+            <div class="cards-content">
+                @foreach(var card in cards){
+                <div class="cards-content-card">
+                   <div class="cards-content-img">
+                        <img src="@card.img" alt="@card.title">
+                   </div> 
+                   <div class="cards-content-text">
+                        <h3>@card.title</h3>
+                        <p>@card.description</p>
+                   </div>
+                   <div class="cards-content-button">
+                        <button>@card.button</button>
+                   </div>
+                </div>
+            }
+            </div>
+            
+        </div>
+    </section>
+
+    <About/>
+</main>
+
+
+@code{
+
+    List<Card> cards = new()
+    {
+        new Card
+        {
+            title = "Adopcion",
+            description = "Encuntra a quien darle un hogar",
+            img = "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=800&q=80",
+            button = "Ver mas",
+        },
+
+        new Card
+        {
+            title = "Vacunacion",
+            description = "Aqui puedes ver las jornadas de vacunacion mas cercanas",
+            img = "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=80",
+            button = "Ver Puntos",
+        },
+        new Card
+        {
+            title = "Ayuda a buscar",
+            description = "Aqui puedes ver los perritos perdidos, dales una mano.",
+            img = "https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=800&q=80",
+            button = "Ir a ayudar"
+        },
+        new Card
+        {
+            title = "Fundaciones",
+            description = "Aqui puedes ver las fundaciones de tu cuidad",
+            img = "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800&q=80",
+            button = "Ver fundaciones"
+        }
+    };
+}

@@ -1,0 +1,153 @@
+# =========================
+# Visual Studio / .NET
+# =========================
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rm/
+[Aa]rm64/
+
+# Visual Studio
+.vs/
+.vscode/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.rsuser
+
+# Visual Studio cache
+.vsconfig
+
+# Build logs
+*.log
+*.tlog
+
+# =========================
+# NuGet
+# =========================
+
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+.nuget/
+project.lock.json
+project.fragment.lock.json
+
+# NuGet generated files
+obj/
+bin/
+
+# =========================
+# .NET
+# =========================
+
+*.dll
+*.exe
+*.pdb
+*.cache
+
+# =========================
+# Test results
+# =========================
+
+TestResults/
+[Tt]est[Rr]esult*/
+*.trx
+
+# =========================
+# Rider / JetBrains
+# =========================
+
+.idea/
+*.sln.iml
+
+# =========================
+# VS Code
+# =========================
+
+.history/
+
+# =========================
+# OS files
+# =========================
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+# User-specific files
+# =========================
+
+*.user
+*.userosscache
+*.suo
+
+# =========================
+# ASP.NET
+# =========================
+
+# Local development configuration
+appsettings.Development.json
+
+# =========================
+# Environment / secrets
+# =========================
+
+.env
+.env.*
+!.env.example
+
+# =========================
+# Logs
+# =========================
+
+logs/
+*.log
+
+# =========================
+# Local databases
+# =========================
+
+*.db
+*.db-shm
+*.db-wal
+
+# =========================
+# Certificates / secrets
+# =========================
+
+*.pfx
+*.p12
+*.key
+*.pem
+
+# =========================
+# MAUI (si tu .app es .NET MAUI)
+# =========================
+
+# Android
+*.apk
+*.aab
+
+# iOS
+*.ipa
+
+# Xcode
+DerivedData/
+*.xcarchive
+
+# =========================
+# Temporary files
+# =========================
+
+*.tmp
+*.temp
+*.swp
+*.bak

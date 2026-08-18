@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="MiHuellitas.app/MiHuellitas.app.csproj" />
+  <Project Path="MiHuellitas.web/MiHuellitas.web.csproj" />
+</Solution>

@@ -1,0 +1,64 @@
+footer{
+    width: 100%;
+    display : grid;
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    align-items: start;
+    justify-items: center;
+    box-shadow : 0rem -1rem 1rem 0.02rem rgba(0, 0, 0, 0.2);
+    border-radius: 1rem 1rem 0 0;
+    padding-top: 1rem;
+}
+
+footer h1{
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 2rem;
+    font-weight: bold;
+    color : var(--color-primary);
+    cursor : pointer;
+    text-shadow : 0 0 0.1rem var(--color-primary), 0 0 0.5rem var(--color-primary);
+    transition : all 300ms ease-in-out;
+}
+
+footer h1:hover{
+    transform: translate(1%, -20%);
+}
+
+footer ul{
+    display : flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    list-style: none;
+    cursor: pointer;
+   
+}
+
+.footer-contacto{
+    display : flex;
+    flex-direction : column;
+    width : 100%;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;   
+
+
+}
+
+.footer-contacto input{
+    border : none;
+    background-color: rgba(30,32,30,0.2);
+    padding-inline: 1rem;
+    padding-block:0.4rem;
+}
+
+.footer-contacto input:focus{
+    outline: none;
+}
+
+.footer-contacto button {
+    margin-top: 0.1rem;
+    background-color: var(--color-primary);
+    border : none;
+    color : white;
+    padding-block:0.4rem;
+    border-radius: 0.5rem;
+    font-size: bold;
+}
