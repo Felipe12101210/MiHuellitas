@@ -1,6 +1,6 @@
 .about{
     width: 100%;
-    height: 40rem;
+    height: 100vw;
     display:grid;
     place-items: center;
     margin-top : 1rem;
@@ -11,6 +11,7 @@
 
 .about-card{
     width : 90%;
+    height: 100%;
     display : grid;
     grid-template-columns: 20% 1fr 20%;
     gap : 1rem;
@@ -20,9 +21,26 @@
     align-content: start;
 }
 
+.about-card-ayuda{
+    display : flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.about-card-ayuda h4, .about-card-ventajas h4{
+    color : var(--color-primary);
+    font-weight: bold;
+}
+
+.about-card-ayuda p{
+    font-size: 0.9rem;
+}
+
 .about-card-img{
     position : relative;
     margin-inline: 1.5rem;
+    height: 50vw;
 }
 
 .about-card-img img{
@@ -46,6 +64,49 @@
 
 .img3{
     position : absolute;
-    top : 14rem;
+    top : 7rem;
     left : 2rem;
+}
+
+.img4{
+    position : absolute;
+    top: 7rem;
+    right: 2rem;
+}
+
+.img5{
+    position : absolute;
+    top : 14rem;
+    left : 0;
+}
+
+.img6{    
+    position : absolute;
+    top: 14rem;
+    right: -0.5rem;
+}
+
+.img7{
+    position : absolute;
+    top : 21rem;
+    left : 2rem;
+}
+
+.img8{
+    position : absolute;
+    top: 21rem;
+    right: 3rem;
+}
+.about-card-ventajas{
+    display : flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.about-card-ventajas ul{
+    display : flex;
+    flex-direction: column;
+    list-style: circle;
+    gap: 1rem;
 }
