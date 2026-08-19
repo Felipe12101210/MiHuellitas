@@ -1,0 +1,31 @@
+<form >
+    <h2>Busca a tu compañia ideal</h2>
+
+    <div>
+        <label>Gustos</label>
+        <input type="text">
+    </div>
+    <div>
+        <label>edad</label>
+        <input type="number">
+    </div>
+    <div>
+        <select name="Raza" id="">
+            @foreach(var raza in raza){
+                <option value="">@raza</option>
+            }
+            
+        </select>
+    </div>
+</form>
+
+@code{
+
+    List<string> raza = new List<string>{
+        "Seleccionar",
+        "Pequines",
+        "Labrador",
+        "Criollo"
+        
+    };
+}

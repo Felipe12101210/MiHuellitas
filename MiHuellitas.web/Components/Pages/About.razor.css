@@ -1,6 +1,6 @@
 .about{
     width: 100%;
-    min-height: 80vh;
+    min-height: 50vh;
     display:grid;
     place-items: center;
     margin-top : 1rem;
@@ -12,13 +12,13 @@
 
 .about-card{
     width : 80%;
-    height: 100%;
     display : grid;
-    grid-template-columns: 20% 60% 20%;
+    grid-template-columns: 25% 50% 25%;
     gap : 1rem;
-    padding : 1rem;
+    padding-inline: 2rem;
     border-radius : 0.5rem;
     align-content: start;
+    box-shadow: 0 1rem 10rem 0.01rem rgba(0,0,0, 0.1);
 }
 
 .about-card-ayuda{
@@ -26,6 +26,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 0.5rem;
 }
 
 .about-card-ayuda h4, .about-card-ventajas h4{
@@ -44,8 +45,8 @@
 }
 
 .about-card-img img{
-    width: 15vw;
-    height: 30vh;
+    width: 12vw;
+    height: 28vh;
     object-fit: cover;
     border-radius : 0.5rem;
 }
@@ -55,6 +56,7 @@
     top : 0;
     left : 0;
     transition : all 500ms ease-in-out;
+    z-index : 2;
 }
 
 .img1:hover{
@@ -67,6 +69,7 @@
     top: 0;
     right: 0;
     transition : all 500ms ease-in-out;
+    z-index : 2;
 }
 
 .img2:hover{
@@ -79,6 +82,7 @@
     top : 4rem;
     left : -1.5rem;
     transition : all 500ms ease-in-out;
+    z-index : 3;
 }
 
 .img3:hover{
@@ -91,6 +95,7 @@
     top: 4rem;
     right: -1.5rem;
     transition : all 300ms ease-in-out;
+    z-index : 3;
 }
 
 .img4:hover{
@@ -103,6 +108,7 @@
     top : 8rem;
     left : 0.5rem;
     transition : all 300ms ease-in-out;
+    z-index : 4;
 }
 
 .img5:hover{
@@ -114,6 +120,7 @@
     top: 8rem;
     right: 0.5rem;
     transition : all 300ms ease-in-out;
+    z-index : 4;
 }
 
 .img6:hover{
@@ -126,10 +133,12 @@
     left : 50%;
     transform: translateX(-50%);
     transition : all 300ms ease-in-out;
+    z-index : 5;
 }
 
 .img7:hover{
     transform: translateY(-5rem ) scale(1.3);
+    z-index: 30;
 }
 
 .img8{
@@ -138,7 +147,7 @@
     left: 50%;
     transform: translateX(-50%);
     transition : all 500ms ease-in-out;
-    z-index: -1;
+    z-index: 1;
 }
 
 .img8:hover{
@@ -152,6 +161,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding : 0.5rem
 }
 
 .about-card-ventajas ul{
@@ -159,4 +169,9 @@
     flex-direction: column;
     list-style: circle;
     gap: 1rem;
+}
+
+.about-card-ventajas li{
+    font-size: smaller;
+    font-weight: 800;
 }

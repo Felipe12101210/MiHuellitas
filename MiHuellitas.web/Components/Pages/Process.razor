@@ -1,0 +1,29 @@
+<section class="section-card">
+    <div class="section-card-content">
+        @foreach(var data in data){
+            <div class="section-card-unique">
+                <img src="@data.svg"/>
+                <div class="section-card-unique-text">
+                    <h5>@data.title</h5>
+                    <p>@data.parraf</p>
+                </div>
+            </div>
+
+            
+            
+        }
+
+        <img src="images/Arrow-right.svg" class="arrow-l"/>
+        <img src="images/Arrow-right.svg" class="arrow-c"/>
+        <img src="images/Arrow-right.svg" class="arrow-r"/>
+    </div>
+</section>
+
+@code{
+    List<(string svg, string title, string parraf)> data = new List<(string svg, string title, string parraf)>{
+        ("images/1.svg", "Paso 1 ", "Estamos las 24 horas la dia revisando todos nuestros casos"),
+        ("images/2.svg", "Paso 2", "Atendemos los casos en orden de relevancia/importancia"),
+        ("images/3.svg", "Paso 3", "Radicamos cada peticion de nuestros contribuyentes"),
+        ("images/4.svg", "Paso 4", "Finalizamos con exito cada parte")
+    };
+}

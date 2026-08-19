@@ -1,0 +1,82 @@
+.section-card{
+    width : 100%;
+    min-height: 30vh;
+    display : grid;
+    place-items: center;
+    margin-top : 4rem
+}
+
+.section-card-content{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 4rem;
+    width: 90%;
+    height: 100%;
+}
+
+.section-card-unique{
+    width: 20%;
+    height: 100%;
+    display : flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 1rem 0.5rem rgba(0,0,0,0.2);
+}
+
+.section-card-unique img{
+    width: 7vw;
+}
+
+.section-card-unique-text{
+    padding : 1rem;
+    display : flex;
+    flex-direction : column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-card-unique-text h5{
+    color : var(--color-primary);
+    font-weight: bold;
+    font-size: larger;
+}
+
+.section-card-unique-text p {
+    display : -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp : 2;
+    line-clamp : 2;
+    overflow: hidden;
+
+    font-weight: 400;
+    font-size: medium;
+}
+
+.arrow-l{
+    width: 3.5vw;
+    position : absolute;
+    top: 50%;
+    left : 24.5%;
+    transform: translate(-50%, -50%);
+
+}
+
+.arrow-c{
+    width: 3.5vw;
+    position : absolute;
+    top: 50%;
+    transform : translateY(-50%)
+}   
+
+.arrow-r{
+    width: 3.5vw;
+    position : absolute;
+    top: 50%;
+    right : 25%;
+    transform : translate(50%, -50%)
+}
