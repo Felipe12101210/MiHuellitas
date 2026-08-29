@@ -1,0 +1,42 @@
+@using MiHuellitas.shared.Models
+
+@if (Pet is null)
+{
+    <div class="pet-card-placeholder">Sin datos</div>
+}
+else
+{
+    <article class="pet-card">
+        <img src="@Pet.ImageUrl" alt="@Pet.Name" />
+        <div class="pet-card-body">
+            <div class="pet-meta">
+                <span>@Pet.Species</span>
+                <span>@Pet.Breed</span>
+            </div>
+            <h3>@Pet.Name</h3>
+            <p class="location">📍 @Pet.Location</p>
+            <p>@(Pet.Description?.Length > 140 ? Pet.Description.Substring(0, 137) + "..." : Pet.Description)</p>
+            <div class="card-footer-row">
+                <span>@(Pet.AgeMonths) meses</span>
+                <span>@Pet.Size</span>
+            </div>
+            <div class="pet-actions">
+                @{
+                    var route = Pet.ListingType switch
+                    {
+                        MiHuellitas.shared.Enums.ListingType.Adoption => $"/adopciones/{Pet.Id}",
+                        MiHuellitas.shared.Enums.ListingType.Lost => $"/perdidos/{Pet.Id}",
+                        MiHuellitas.shared.Enums.ListingType.Found => $"/encontrados/{Pet.Id}",
+                        _ => $"/adopciones/{Pet.Id}",
+                    };
+                }
+                <a class="primary-btn" href="@route">Ver detalle</a>
+            </div>
+        </div>
+    </article>
+}
+
+@code {
+    [Parameter]
+    public Pet? Pet { get; set; }
+}

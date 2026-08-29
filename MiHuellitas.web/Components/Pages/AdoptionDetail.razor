@@ -1,0 +1,16 @@
+@page "/adopciones/{Id:int}"
+@inject MiHuellitas.shared.Services.MockCatalogService Catalog
+@using MiHuellitas.shared.Models
+
+<PageTitle>Detalle mascota</PageTitle>
+
+@{
+    Pet? pet = Catalog.Pets.FirstOrDefault(p => p.Id == Id && p.ListingType == MiHuellitas.shared.Enums.ListingType.Adoption);
+}
+
+<PetDetail Pet="pet" BackUrl="/adopciones" />
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+}

@@ -1,0 +1,27 @@
+@page "/notificaciones"
+@inject MiHuellitas.shared.Services.MockCatalogService Catalog
+
+<PageTitle>Notificaciones</PageTitle>
+
+<section class="page-shell">
+    <header class="page-header">
+        <div>
+            <p class="eyebrow">Actualizaciones importantes</p>
+            <h1>Notificaciones</h1>
+        </div>
+    </header>
+
+    <div class="notification-list">
+        @foreach (var notification in Catalog.Notifications)
+        {
+            <article class="notification-item">
+                <div class="notification-badge">@notification.Type</div>
+                <div>
+                    <h3>@notification.Title</h3>
+                    <p>@notification.Message</p>
+                    <small>@notification.CreatedAt.ToString("dd MMM yyyy, HH:mm")</small>
+                </div>
+            </article>
+        }
+    </div>
+</section>

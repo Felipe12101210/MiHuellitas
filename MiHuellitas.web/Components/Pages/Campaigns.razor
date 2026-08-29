@@ -1,0 +1,34 @@
+@page "/campanas"
+@inject MiHuellitas.shared.Services.MockCatalogService Catalog
+
+<PageTitle>Campañas</PageTitle>
+
+<section class="page-shell">
+    <header class="page-header">
+        <div>
+            <p class="eyebrow">Acciones de impacto</p>
+            <h1>Campañas</h1>
+        </div>
+    </header>
+
+    <div class="cards-grid">
+        @foreach (var campaign in Catalog.Campaigns)
+        {
+            <article class="campaign-card">
+                <img src="@campaign.ImageUrl" alt="@campaign.Title" />
+                <div class="pet-card-body">
+                    <div class="pet-meta">
+                        <span class="badge found">@campaign.Status</span>
+                    </div>
+                    <h3>@campaign.Title</h3>
+                    <p class="location">📍 @campaign.Location</p>
+                    <p>@campaign.Description</p>
+                    <div class="card-footer-row">
+                        <span>@campaign.Organizer</span>
+                        <span>@campaign.EventDate.ToString("dd MMM yyyy")</span>
+                    </div>
+                </div>
+            </article>
+        }
+    </div>
+</section>

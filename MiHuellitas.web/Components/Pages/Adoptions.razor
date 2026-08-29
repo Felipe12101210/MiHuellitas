@@ -1,0 +1,120 @@
+@page "/adopciones"
+@inject MiHuellitas.shared.Services.MockCatalogService Catalog
+
+@using System.Linq
+@using MiHuellitas.shared.Models
+
+<PageTitle>Adopciones</PageTitle>
+
+<section class="page-shell">
+    <header class="page-header">
+        <div>
+            <p class="eyebrow">Encuentra tu compañero</p>
+            <h1>Adopciones</h1>
+        </div>
+    </header>
+
+    <div class="filters-row">
+        <label>
+            Especie
+            <select @onchange="OnSpeciesChanged" class="form-select">
+                <option value="">Todas</option>
+                @foreach (var s in SpeciesOptions)
+                {
+                    <option value="@s">@s</option>
+                }
+            </select>
+        </label>
+
+        <label>
+            Raza
+            <select @onchange="OnBreedChanged" class="form-select">
+                <option value="">Todas</option>
+                @foreach (var b in BreedOptions)
+                {
+                    <option value="@b">@b</option>
+                }
+            </select>
+        </label>
+
+        <label>
+            Estado
+            <select @onchange="OnStatusChanged" class="form-select">
+                <option value="">Todos</option>
+                @foreach (var st in StatusOptions)
+                {
+                    <option value="@st">@st</option>
+                }
+            </select>
+        </label>
+
+        <button class="secondary-btn" @onclick="ClearFilters">Limpiar</button>
+    </div>
+
+    <div class="cards-grid">
+        @if (Filtered.Any())
+        {
+            @foreach (var pet in Filtered.Take(pageSize))
+            {
+                <PetCard Pet="pet" />
+            }
+
+            @if (Filtered.Count() > pageSize)
+            {
+                <div class="load-more">
+                    <button class="primary-btn" @onclick="LoadMore">Cargar más</button>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-state">No se encontraron animales que coincidan con los filtros.</div>
+        }
+    </div>
+</section>
+
+@code {
+    private string selectedSpecies = string.Empty;
+    private string selectedBreed = string.Empty;
+    private string selectedStatus = string.Empty;
+
+    private IEnumerable<string> SpeciesOptions => Catalog.Adoptions.Select(p => p.Species).Distinct().OrderBy(x => x);
+    private IEnumerable<string> BreedOptions => Catalog.Adoptions.Select(p => p.Breed).Distinct().OrderBy(x => x);
+    private IEnumerable<string> StatusOptions => Catalog.Adoptions.Select(p => p.Status.ToString()).Distinct().OrderBy(x => x);
+
+    private IEnumerable<Pet> Filtered => Catalog.Adoptions
+        .Where(p => string.IsNullOrEmpty(selectedSpecies) || p.Species == selectedSpecies)
+        .Where(p => string.IsNullOrEmpty(selectedBreed) || p.Breed == selectedBreed)
+        .Where(p => string.IsNullOrEmpty(selectedStatus) || p.Status.ToString() == selectedStatus)
+        .ToList();
+
+    private int pageSize = 6;
+
+    private void LoadMore()
+    {
+        pageSize += 6;
+    }
+
+    private void OnSpeciesChanged(ChangeEventArgs e)
+    {
+        selectedSpecies = e?.Value?.ToString() ?? string.Empty;
+    }
+
+    private void OnBreedChanged(ChangeEventArgs e)
+    {
+        selectedBreed = e?.Value?.ToString() ?? string.Empty;
+    }
+
+    private void OnStatusChanged(ChangeEventArgs e)
+    {
+        selectedStatus = e?.Value?.ToString() ?? string.Empty;
+    }
+
+    private void ClearFilters()
+    {
+        selectedSpecies = string.Empty;
+        selectedBreed = string.Empty;
+        selectedStatus = string.Empty;
+        pageSize = 6;
+    }
+}

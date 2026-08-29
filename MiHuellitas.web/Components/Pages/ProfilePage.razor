@@ -1,0 +1,57 @@
+@page "/perfil"
+@inject MiHuellitas.shared.Services.MockCatalogService Catalog
+
+<PageTitle>Perfil</PageTitle>
+
+<section class="page-shell">
+    <header class="page-header">
+        <div>
+            <p class="eyebrow">Tu comunidad</p>
+            <h1>Perfil</h1>
+        </div>
+    </header>
+
+    <div class="profile-layout">
+        <aside class="profile-card">
+            <img src="@Catalog.CurrentUser.AvatarUrl" alt="@Catalog.CurrentUser.Name" class="avatar" />
+            <h2>@Catalog.CurrentUser.Name</h2>
+            <p>@Catalog.CurrentUser.City</p>
+            <p>@Catalog.CurrentUser.Bio</p>
+            <ul class="simple-list">
+                <li>@Catalog.CurrentUser.Email</li>
+                <li>@Catalog.CurrentUser.Phone</li>
+            </ul>
+        </aside>
+
+        <div class="profile-content">
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <strong>14</strong>
+                    <span>Reportes</span>
+                </div>
+                <div class="stat-box">
+                    <strong>6</strong>
+                    <span>Publicaciones</span>
+                </div>
+                <div class="stat-box">
+                    <strong>3</strong>
+                    <span>Favoritos</span>
+                </div>
+            </div>
+
+            <div class="feed-box">
+                <h3>Actividad reciente</h3>
+                @foreach (var notification in Catalog.Notifications)
+                {
+                    <div class="feed-row">
+                        <span class="dot"></span>
+                        <div>
+                            <strong>@notification.Title</strong>
+                            <p>@notification.Message</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>

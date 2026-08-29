@@ -1,0 +1,37 @@
+@page "/fundaciones"
+@inject MiHuellitas.shared.Services.MockCatalogService Catalog
+
+<PageTitle>Fundaciones</PageTitle>
+
+<section class="page-shell">
+    <header class="page-header">
+        <div>
+            <p class="eyebrow">Aliados de bienestar</p>
+            <h1>Fundaciones</h1>
+        </div>
+    </header>
+
+    <div class="cards-grid foundation-grid">
+        @foreach (var foundation in Catalog.Foundations)
+        {
+            <article class="foundation-card">
+                <img src="@foundation.LogoUrl" alt="@foundation.Name" />
+                <div class="pet-card-body">
+                    <div class="pet-meta">
+                        @if (foundation.IsVerified)
+                        {
+                            <span class="badge found">Verificada</span>
+                        }
+                    </div>
+                    <h3>@foundation.Name</h3>
+                    <p class="location">📍 @foundation.Location</p>
+                    <p>@foundation.Description</p>
+                    <ul class="simple-list">
+                        <li>@foundation.ContactPhone</li>
+                        <li>@foundation.Email</li>
+                    </ul>
+                </div>
+            </article>
+        }
+    </div>
+</section>

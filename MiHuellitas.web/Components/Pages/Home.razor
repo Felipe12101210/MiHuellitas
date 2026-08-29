@@ -1,84 +1,143 @@
 ﻿@page "/"
-@using MiHuellitas.shared.Models
+@inject MiHuellitas.shared.Services.MockCatalogService Catalog
 
+<PageTitle>Mi Huellitas</PageTitle>
 
-<main>
-    <section class="replay-video">
-        <video autoplay muted loop playsinline>
-            <source src="videos/Video1_MH.mp4" type="video/mp4">
-        </video>
-    </section>
+<section class="hero-section">
+    <div class="hero-copy">
+        <p class="eyebrow">Bienestar animal</p>
+        <h1>Cuidando cada huella con amor y acción.</h1>
+        <p>
+            Encuentra animales para adoptar, reporta mascotas perdidas, conecta con fundaciones y participa en campañas de bienestar.
+        </p>
 
-    <section class="cards">
-        <div class="cards-item">
-            <h1>¿Que quieres hacer hoy?</h1>
-            <div class="cards-content">
-                @foreach(var card in cards){
-                <div class="cards-content-card">
-                   <div class="cards-content-img">
-                        <img src="@card.img" alt="@card.title">
-                   </div> 
-                   <div class="cards-content-text">
-                        <h3>@card.title</h3>
-                        <p>@card.description</p>
-                   </div>
-                   <div class="cards-content-button">
-                        <button>@card.button</button>
-                   </div>
-                </div>
-            }
-            </div>
-            
+        <div class="cta-row">
+            <a class="primary-btn" href="/adopciones">Adoptar</a>
+            <a class="secondary-btn" href="/campanas">Unirme a una campaña</a>
         </div>
-    </section>
+    </div>
 
-    <section>
-        <About/>
-    </section>
-    
-    <section>
-        <Process></Process>
-    </section>
+    <div class="hero-visual">
+        <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=1000&q=80" alt="Mascota feliz" />
+    </div>
+</section>
 
-    <section>
-        <FormPet></FormPet>
-    </section>
+<section class="info-strip">
+    <div class="stat-box">
+        <strong>120+</strong>
+        <span>Casos atendidos</span>
+    </div>
+    <div class="stat-box">
+        <strong>40</strong>
+        <span>Fundaciones</span>
+    </div>
+    <div class="stat-box">
+        <strong>18</strong>
+        <span>Campañas activas</span>
+    </div>
+    <div class="stat-box">
+        <strong>96%</strong>
+        <span>Seguimiento exitoso</span>
+    </div>
+</section>
 
-</main>
+<section class="section-block">
+    <div class="section-heading">
+        <p class="eyebrow">Qué puedes hacer hoy</p>
+        <h2>Más cerca de cada animal en necesidad</h2>
+    </div>
 
-
-@code{
-
-    List<Card> cards = new()
-    {
-        new Card
+    <div class="cards-grid">
+        @foreach (var card in cards)
         {
-            title = "Adopcion",
-            description = "Encuntra a quien darle un hogar",
-            img = "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=800&q=80",
-            button = "Ver mas",
-        },
-
-        new Card
-        {
-            title = "Vacunacion",
-            description = "Aqui puedes ver las jornadas de vacunacion mas cercanas",
-            img = "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=80",
-            button = "Ver Puntos",
-        },
-        new Card
-        {
-            title = "Ayuda a buscar",
-            description = "Aqui puedes ver los perritos perdidos, dales una mano.",
-            img = "https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=800&q=80",
-            button = "Ir a ayudar"
-        },
-        new Card
-        {
-            title = "Fundaciones",
-            description = "Aqui puedes ver las fundaciones de tu cuidad",
-            img = "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800&q=80",
-            button = "Ver fundaciones"
+            <article class="action-card">
+                <img src="@card.ImageUrl" alt="@card.Title" />
+                <div class="pet-card-body">
+                   <h3>@card.Title</h3>
+                   <p>@card.Description</p>
+                   <a href="@card.Link" class="text-link">@card.ButtonText</a>
+                </div>
+            </article>
         }
-    };
+    </div>
+</section>
+
+<section class="double-panel">
+    <div class="panel-card">
+        <p class="eyebrow">Nuestra misión</p>
+        <h3>Conectamos hogares con animales que necesitan cariño.</h3>
+        <p>
+            Mi Huellitas reúne a familias, refugios, voluntarios y expertos para hacer seguimiento de adopciones, rescates, campañas y reportes.
+        </p>
+    </div>
+
+    <div class="panel-card highlight-card">
+        <p class="eyebrow">Adopciones destacadas</p>
+        @foreach (var pet in Catalog.Adoptions.Take(3))
+        {
+            <div class="mini-item">
+                <strong>@pet.Name</strong>
+                <span>@pet.Breed · @pet.Location</span>
+            </div>
+        }
+    </div>
+</section>
+
+<section class="section-block">
+    <div class="section-heading">
+        <p class="eyebrow">tendencias</p>
+        <h2>Recuerda estas historias </h2>
+    </div>
+
+    <div class="cards-grid">
+        @foreach (var pet in Catalog.Pets.Take(3))
+        {
+            <article class="pet-card">
+                <img src="@pet.ImageUrl" alt="@pet.Name" />
+                <div class="pet-card-body">
+                   <div class="pet-meta">
+                       <span>@pet.ListingType</span>
+                       <span>@pet.Species</span>
+                   </div>
+                   <h3>@pet.Name</h3>
+                   <p class="location">📍 @pet.Location</p>
+                   <p>@pet.Description</p>
+                </div>
+            </article>
+        }
+    </div>
+</section>
+
+@code {
+    private readonly (string Title, string Description, string ImageUrl, string ButtonText, string Link)[] cards =
+    [
+        (
+            "Adopta",
+            "Descubre animales que esperan un hogar seguro y lleno de cariño.",
+            "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=800&q=80",
+            "Ver adopciones",
+            "/adopciones"
+        ),
+        (
+            "Perdidos",
+            "Consulta reportes recientes de animales desaparecidos y ayuda a localizarlos.",
+            "https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=800&q=80",
+            "Ver reportes",
+            "/perdidos"
+        ),
+        (
+            "Encontrados",
+            "Revisa animales rescatados y en espera de ser reunidos con su familia.",
+            "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800&q=80",
+            "Ver encontrados",
+            "/encontrados"
+        ),
+        (
+            "Campañas",
+            "Participa en jornadas de vacunación, adopción y ayuda comunitaria.",
+            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=80",
+            "Ver campañas",
+            "/campanas"
+        )
+    ];
 }

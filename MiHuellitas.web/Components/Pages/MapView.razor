@@ -1,0 +1,33 @@
+@page "/mapa"
+@inject MiHuellitas.shared.Services.MockCatalogService Catalog
+
+<PageTitle>Mapa</PageTitle>
+
+<section class="page-shell">
+    <header class="page-header">
+        <div>
+            <p class="eyebrow">Ubicaciones relevantes</p>
+            <h1>Mapa</h1>
+        </div>
+    </header>
+
+    <div class="map-panel">
+        <div class="map-surface">
+            @foreach (var pet in Catalog.Pets)
+            {
+                <div class="map-pin" style="left:@((pet.Id * 14) % 78 + 8)% ; top:@((pet.Id * 21) % 60 + 10)% ;">
+                    <span>@pet.Name</span>
+                </div>
+            }
+        </div>
+        <div class="map-list">
+            @foreach (var pet in Catalog.Pets)
+            {
+                <div class="mini-item">
+                    <strong>@pet.Name</strong>
+                    <span>@pet.Location</span>
+                </div>
+            }
+        </div>
+    </div>
+</section>

@@ -1,0 +1,221 @@
+@using MiHuellitas.shared.Models
+@inject MiHuellitas.shared.Services.MockCatalogService Catalog
+
+@if (Pet is null)
+{
+    <section class="page-shell">
+        <h2>Animal no encontrado</h2>
+        <p>El animal solicitado no existe o ha sido removido.</p>
+    </section>
+}
+else
+{
+    <section class="page-shell detail-shell">
+        <div class="detail-grid">
+            <div class="detail-media">
+                <img src="@Pet.ImageUrl" alt="@Pet.Name" />
+            </div>
+            <div class="detail-body">
+                <h1>@Pet.Name</h1>
+                <div class="pet-meta">
+                    <span>@Pet.Species</span>
+                    <span>@Pet.Breed</span>
+                    <span>@Pet.Size</span>
+                </div>
+
+                <p class="location">📍 @Pet.Location</p>
+                <p>@Pet.Description</p>
+
+                <div class="contact-box">
+                    <h4>Contacto</h4>
+                    <p><strong>@Pet.ResponsibleName</strong></p>
+                    <p>@Pet.ContactPhone</p>
+                </div>
+
+                @if (Pet.Foundation is not null)
+                {
+                    <div class="foundation-box">
+                        <h4>Fundación</h4>
+                        <p>@Pet.Foundation.Name</p>
+                        <p>@Pet.Foundation.Location</p>
+                    </div>
+                }
+
+                @if (Pet.ListingType == MiHuellitas.shared.Enums.ListingType.Adoption)
+                {
+                    <a class="primary-btn" href="tel:@Pet.ContactPhone">Llamar</a>
+                }
+                else
+                {
+                    <a class="primary-btn" href="tel:@Pet.ContactPhone">Contactar</a>
+                }
+
+                <a class="secondary-btn" href="@BackUrl">Volver</a>
+
+                <section class="report-section">
+                    <h3>@(ReportHeader)</h3>
+                    <div class="report-form">
+                        <label>Nombre</label>
+                        <input @bind="reporterName" @bind:event="oninput" aria-invalid="@(!string.IsNullOrEmpty(reporterNameError))" />
+                        @if (!string.IsNullOrEmpty(reporterNameError))
+                        {
+                            <div class="field-error">@reporterNameError</div>
+                        }
+
+                        <label>Teléfono</label>
+                        <input @bind="reporterPhone" @bind:event="oninput" aria-invalid="@(!string.IsNullOrEmpty(reporterPhoneError))" />
+                        @if (!string.IsNullOrEmpty(reporterPhoneError))
+                        {
+                            <div class="field-error">@reporterPhoneError</div>
+                        }
+
+                        <label>Tipo</label>
+                        <select @bind="reportType">
+                            <option value="Info">Tengo información</option>
+                            <option value="Sighted">Lo vi</option>
+                            <option value="Issue">Hay un problema</option>
+                        </select>
+
+                        <label>Mensaje</label>
+                        <textarea @bind="reportMessage"></textarea>
+
+                        <div style="margin-top:12px;">
+                            <button class="primary-btn" @onclick="SubmitReport" disabled="@(!CanSubmit)">Enviar reporte</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        @if (showToast)
+        {
+            <div class="toast-notification @(toastClosing ? "closing" : "")" role="status" aria-live="polite">
+                <div class="toast-content">
+                    <strong>Reporte enviado</strong>
+                    <div class="toast-message">@toastMessage</div>
+                </div>
+                <button class="toast-close" aria-label="Cerrar" @onclick="CloseToast">×</button>
+            </div>
+        }
+
+    </section>
+}
+
+@code {
+    [Parameter]
+    public Pet? Pet { get; set; }
+
+    [Parameter]
+    public string BackUrl { get; set; } = "/";
+
+    private string ReportHeader => Pet?.ListingType switch
+    {
+        MiHuellitas.shared.Enums.ListingType.Adoption => "Enviar reporte / mostrar interés",
+        MiHuellitas.shared.Enums.ListingType.Lost => "Reportar información / contactar responsable",
+        MiHuellitas.shared.Enums.ListingType.Found => "Reportar información / contactar responsable",
+        _ => "Enviar reporte"
+    };
+
+    // Report form model
+    private string reporterName = string.Empty;
+    private string reporterPhone = string.Empty;
+    private string reportType = "Info";
+    private string reportMessage = string.Empty;
+
+    private string reporterNameError = string.Empty;
+    private string reporterPhoneError = string.Empty;
+
+    private bool showToast = false;
+    private bool toastClosing = false;
+    private string toastMessage = string.Empty;
+    private CancellationTokenSource? toastCts;
+
+    private bool CanSubmit => !string.IsNullOrWhiteSpace(reporterName) && PhoneLooksValid(reporterPhone);
+
+    private bool PhoneLooksValid(string phone)
+    {
+        if (string.IsNullOrWhiteSpace(phone)) return false;
+        var digits = new string(phone.Where(char.IsDigit).ToArray());
+        return digits.Length >= 7;
+    }
+
+    private async Task SubmitReport()
+    {
+        if (Pet is null)
+            return;
+
+        reporterNameError = string.Empty;
+        reporterPhoneError = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(reporterName))
+        {
+            reporterNameError = "Por favor ingresa tu nombre.";
+        }
+
+        if (!PhoneLooksValid(reporterPhone))
+        {
+            reporterPhoneError = "Por favor ingresa un teléfono válido (mínimo 7 dígitos).";
+        }
+
+        if (!string.IsNullOrEmpty(reporterNameError) || !string.IsNullOrEmpty(reporterPhoneError))
+        {
+            StateHasChanged();
+            return;
+        }
+
+        var report = new Report
+        {
+            PetId = Pet.Id,
+            ReporterName = reporterName,
+            ReporterPhone = reporterPhone,
+            Type = reportType,
+            Message = reportMessage
+        };
+
+        Catalog.SubmitReport(report);
+
+        // feedback
+        toastMessage = "Gracias — hemos recibido tu reporte.";
+        toastClosing = false;
+        showToast = true;
+        StateHasChanged();
+
+        // clear form
+        reporterName = string.Empty;
+        reporterPhone = string.Empty;
+        reportMessage = string.Empty;
+
+        // start auto-hide timer
+        toastCts?.Cancel();
+        toastCts = new CancellationTokenSource();
+        try
+        {
+            await Task.Delay(3500, toastCts.Token);
+            await StartToastClose();
+        }
+        catch (TaskCanceledException) { }
+    }
+
+    private async Task StartToastClose()
+    {
+        if (!showToast || toastClosing) return;
+        toastClosing = true;
+        StateHasChanged();
+        await Task.Delay(220);
+        showToast = false;
+        toastClosing = false;
+        StateHasChanged();
+    }
+
+    private async Task CloseToast()
+    {
+        toastCts?.Cancel();
+        await StartToastClose();
+    }
+
+    public void Dispose()
+    {
+        toastCts?.Cancel();
+        toastCts?.Dispose();
+    }
+}
