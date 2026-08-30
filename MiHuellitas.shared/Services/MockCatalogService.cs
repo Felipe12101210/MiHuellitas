@@ -24,6 +24,7 @@ public sealed class MockCatalogService
     // Events to notify UI about changes in notifications/reports/pets (mock reactive)
     public event Action? NotificationsChanged;
     public event Action? PetsChanged;
+    public event Action? FavoritesChanged;
 
     // Convenience methods for Foundations
     public IReadOnlyList<Foundation> GetFoundations() => Foundations;
@@ -109,5 +110,21 @@ public sealed class MockCatalogService
         }
 
         return report;
+    }
+
+    // Favorites (in-memory mock for the current user)
+    public bool IsFavorite(int petId) => MockData.FavoritePetIds.Contains(petId);
+
+    public int FavoritesCount => MockData.FavoritePetIds.Count;
+
+    public IReadOnlyList<Pet> GetFavoritedPets() => MockData.Pets.Where(p => MockData.FavoritePetIds.Contains(p.Id)).ToList();
+
+    public void ToggleFavorite(int petId)
+    {
+        if (!MockData.FavoritePetIds.Add(petId))
+        {
+            MockData.FavoritePetIds.Remove(petId);
+        }
+        try { FavoritesChanged?.Invoke(); } catch { }
     }
 }

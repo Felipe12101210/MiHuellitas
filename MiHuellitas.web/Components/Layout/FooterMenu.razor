@@ -17,7 +17,21 @@
     <div class="footer-contacto">
         <h4>Contáctanos</h4>
         <label>Correo</label>
-        <input type="email" placeholder="tucorreo@ejemplo.com" />
-        <button>Enviar</button>
+        <input type="email" placeholder="tucorreo@ejemplo.com" @bind="contactEmail" />
+        <button @onclick="SendContact">Enviar</button>
+        @if (!string.IsNullOrEmpty(contactMessage))
+        {
+            <p class="footer-contacto-msg">@contactMessage</p>
+        }
     </div>
 </footer>
+
+@code {
+    private string contactEmail = string.Empty;
+    private string contactMessage = string.Empty;
+
+    private void SendContact()
+    {
+        contactMessage = "Gracias — nos pondremos en contacto contigo.";
+    }
+}

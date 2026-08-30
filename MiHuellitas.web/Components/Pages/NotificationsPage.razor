@@ -39,9 +39,25 @@
             }
         }
     </div>
+
+    @if (showToast)
+    {
+        <div class="toast-notification @(toastClosing ? "closing" : "")" role="status" aria-live="polite">
+            <div class="toast-content">
+                <strong>Notificaciones</strong>
+                <div class="toast-message">@toastMessage</div>
+            </div>
+            <button class="toast-close" aria-label="Cerrar" @onclick="CloseToast">×</button>
+        </div>
+    }
 </section>
 
 @code {
+    private bool showToast = false;
+    private bool toastClosing = false;
+    private string toastMessage = string.Empty;
+    private CancellationTokenSource? toastCts;
+
     protected override void OnInitialized()
     {
         Catalog.NotificationsChanged += OnNotificationsChanged;
@@ -53,9 +69,11 @@
         InvokeAsync(StateHasChanged);
     }
 
-    private void MarkRead(int id)
+    private async Task MarkRead(int id)
     {
         Catalog.MarkNotificationRead(id);
+        toastMessage = "Notificación marcada como leída.";
+        ShowToast();
     }
 
     private void DeleteNotification(int id)
@@ -63,8 +81,47 @@
         Catalog.RemoveNotification(id);
     }
 
+    private void ShowToast()
+    {
+        toastClosing = false;
+        showToast = true;
+        toastCts?.Cancel();
+        toastCts = new CancellationTokenSource();
+        _ = HideToastAfterDelay(toastCts.Token);
+    }
+
+    private async Task HideToastAfterDelay(CancellationToken token)
+    {
+        try
+        {
+            await Task.Delay(2500, token);
+            if (!showToast || toastClosing) return;
+            toastClosing = true;
+            await InvokeAsync(StateHasChanged);
+            await Task.Delay(220);
+            showToast = false;
+            toastClosing = false;
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (TaskCanceledException) { }
+    }
+
+    private async Task CloseToast()
+    {
+        toastCts?.Cancel();
+        if (!showToast || toastClosing) return;
+        toastClosing = true;
+        StateHasChanged();
+        await Task.Delay(220);
+        showToast = false;
+        toastClosing = false;
+        StateHasChanged();
+    }
+
     public void Dispose()
     {
         Catalog.NotificationsChanged -= OnNotificationsChanged;
+        toastCts?.Cancel();
+        toastCts?.Dispose();
     }
 }

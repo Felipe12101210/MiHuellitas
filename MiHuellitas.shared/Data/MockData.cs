@@ -5,6 +5,25 @@ namespace MiHuellitas.shared.Data;
 
 public static class MockData
 {
+    // Geographic bounds of the stylized map (Bogotá, Colombia). Shared with the
+    // Web and MAUI map projections so pins land in equivalent places.
+    public const double LAT_MIN = 4.55;
+    public const double LAT_MAX = 4.75;
+    public const double LON_MIN = -74.15;
+    public const double LON_MAX = -74.05;
+
+    // Deterministic, non-overlapping coordinates per pet Id, spread as a grid
+    // with padding so pins stay inside the drawn surface.
+    private static (double Lat, double Lon) PetCoords(int id)
+    {
+        int index = id - 1;
+        double fx = index % 3 / 2.0;
+        double fy = index / 3 / 2.0;
+        double lat = LAT_MAX - (0.18 + 0.64 * fy) * (LAT_MAX - LAT_MIN);
+        double lon = LON_MIN + (0.18 + 0.64 * fx) * (LON_MAX - LON_MIN);
+        return (Math.Round(lat, 5), Math.Round(lon, 5));
+    }
+
     public static List<Foundation> Foundations { get; } =
     [
         new Foundation
@@ -54,6 +73,8 @@ public static class MockData
             Sex = "Hembra",
             Size = "Mediana",
             Location = "Usaquén, Bogotá",
+            Latitude = PetCoords(1).Lat,
+            Longitude = PetCoords(1).Lon,
             Description = "Muy sociable, juguetona y excelente compañía para familias activas.",
             ImageUrl = "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=900&q=80",
             ListingType = ListingType.Adoption,
@@ -73,6 +94,8 @@ public static class MockData
             Sex = "Macho",
             Size = "Pequeño",
             Location = "Chapinero, Bogotá",
+            Latitude = PetCoords(2).Lat,
+            Longitude = PetCoords(2).Lon,
             Description = "Se adapta bien a departamentos, es atento y muy curioso.",
             ImageUrl = "https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=900&q=80",
             ListingType = ListingType.Adoption,
@@ -92,6 +115,8 @@ public static class MockData
             Sex = "Hembra",
             Size = "Pequeña",
             Location = "La Candelaria, Bogotá",
+            Latitude = PetCoords(3).Lat,
+            Longitude = PetCoords(3).Lon,
             Description = "Muy tranquila, elegante y acostumbrada a convivir con niños.",
             ImageUrl = "https://images.unsplash.com/photo-1511044568932-338cba0ad803?auto=format&fit=crop&w=900&q=80",
             ListingType = ListingType.Adoption,
@@ -111,6 +136,8 @@ public static class MockData
             Sex = "Macho",
             Size = "Grande",
             Location = "El Poblado, Medellín",
+            Latitude = PetCoords(4).Lat,
+            Longitude = PetCoords(4).Lon,
             Description = "Fue encontrado cerca de una universidad y aún necesita una familia responsable.",
             ImageUrl = "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=900&q=80",
             ListingType = ListingType.Found,
@@ -130,6 +157,8 @@ public static class MockData
             Sex = "Hembra",
             Size = "Mediana",
             Location = "Suba, Bogotá",
+            Latitude = PetCoords(5).Lat,
+            Longitude = PetCoords(5).Lon,
             Description = "Se perdió el pasado sábado cerca de la avenida principal, lleva collar con placa.",
             ImageUrl = "https://images.unsplash.com/photo-1537151627183-2d48c86b98a1?auto=format&fit=crop&w=900&q=80",
             ListingType = ListingType.Lost,
@@ -149,6 +178,8 @@ public static class MockData
             Sex = "Macho",
             Size = "Pequeño",
             Location = "Envigado, Antioquia",
+            Latitude = PetCoords(6).Lat,
+            Longitude = PetCoords(6).Lon,
             Description = "Se reportó como perdido por una familia con bebés; responder a cualquier aviso.",
             ImageUrl = "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=900&q=80",
             ListingType = ListingType.Lost,
@@ -195,6 +226,9 @@ public static class MockData
 
     // Reports submitted by users (stored in-memory for mock)
     public static List<Report> Reports { get; } = new List<Report>();
+
+    // Favorite pet ids for the current user (stored in-memory for mock)
+    public static HashSet<int> FavoritePetIds { get; } = new HashSet<int>();
 
     public static UserProfile CurrentUser { get; } = new UserProfile
     {

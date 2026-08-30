@@ -1,4 +1,6 @@
 @using MiHuellitas.shared.Models
+@using MiHuellitas.shared.Services
+@inject MockCatalogService Catalog
 
 @if (Pet is null)
 {
@@ -41,12 +43,72 @@ else
                     };
                 }
                 <a class="primary-btn" href="@route">Ver detalle</a>
+                <button class="secondary-btn" @onclick="ToggleFavorite">@(Catalog.IsFavorite(Pet.Id) ? "Quitar favorito" : "Favorito")</button>
             </div>
         </div>
     </article>
+
+    @if (showToast)
+    {
+        <div class="toast-notification @(toastClosing ? "closing" : "")" role="status" aria-live="polite">
+            <div class="toast-content">
+                <strong>Favoritos</strong>
+                <div class="toast-message">@toastMessage</div>
+            </div>
+            <button class="toast-close" aria-label="Cerrar" @onclick="CloseToast">×</button>
+        </div>
+    }
 }
 
 @code {
     [Parameter]
     public Pet? Pet { get; set; }
+
+    private bool showToast = false;
+    private bool toastClosing = false;
+    private string toastMessage = string.Empty;
+    private CancellationTokenSource? toastCts;
+
+    private async Task ToggleFavorite()
+    {
+        if (Pet is null) return;
+        var nowFavorite = !Catalog.IsFavorite(Pet.Id);
+        Catalog.ToggleFavorite(Pet.Id);
+        toastMessage = nowFavorite ? "Mascota añadida a favoritos." : "Mascota eliminada de favoritos.";
+        toastClosing = false;
+        showToast = true;
+        StateHasChanged();
+
+        toastCts?.Cancel();
+        toastCts = new CancellationTokenSource();
+        try
+        {
+            await Task.Delay(2500, toastCts.Token);
+            await StartToastClose();
+        }
+        catch (TaskCanceledException) { }
+    }
+
+    private async Task StartToastClose()
+    {
+        if (!showToast || toastClosing) return;
+        toastClosing = true;
+        StateHasChanged();
+        await Task.Delay(220);
+        showToast = false;
+        toastClosing = false;
+        StateHasChanged();
+    }
+
+    private async Task CloseToast()
+    {
+        toastCts?.Cancel();
+        await StartToastClose();
+    }
+
+    public void Dispose()
+    {
+        toastCts?.Cancel();
+        toastCts?.Dispose();
+    }
 }

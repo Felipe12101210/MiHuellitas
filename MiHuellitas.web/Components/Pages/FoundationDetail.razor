@@ -25,6 +25,12 @@ else
             </div>
             <div class="detail-body">
                 <h1>@foundation.Name</h1>
+                @if (foundation.IsVerified)
+                {
+                    <div class="pet-meta">
+                        <span class="badge found">Verificada</span>
+                    </div>
+                }
                 <p class="location">📍 @foundation.Location</p>
                 <p>@foundation.Description</p>
 

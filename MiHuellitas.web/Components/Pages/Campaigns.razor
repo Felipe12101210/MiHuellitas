@@ -25,12 +25,12 @@
         <div class="filters-row">
             <label>
                 Título
-                <input @bind="searchTitle" @bind:event="oninput" class="form-control" placeholder="Buscar por título" />
+                <input @bind="searchTitle" @bind:event="oninput" @bind:after="ResetPagination" class="form-control" placeholder="Buscar por título" />
             </label>
 
             <label>
                 Ubicación
-                <input @bind="searchLocation" @bind:event="oninput" class="form-control" placeholder="Buscar por ubicación" />
+                <input @bind="searchLocation" @bind:event="oninput" @bind:after="ResetPagination" class="form-control" placeholder="Buscar por ubicación" />
             </label>
 
             <button class="secondary-btn" @onclick="ClearFilters">Limpiar</button>
@@ -93,10 +93,13 @@
 
     private void LoadMore() => pageSize += 6;
 
+    private void ResetPagination() => pageSize = 6;
+
     private void ClearFilters()
     {
         searchTitle = string.Empty;
         searchLocation = string.Empty;
+        pageSize = 6;
     }
 
     protected override async Task OnInitializedAsync()

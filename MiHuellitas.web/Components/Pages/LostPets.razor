@@ -27,7 +27,7 @@
         <div class="filters-row">
         <label>
             Especie
-            <select @onchange="OnSpeciesChanged" class="form-select">
+            <select @onchange="OnSpeciesChanged" class="form-select" value="@selectedSpecies">
                 <option value="">Todas</option>
                 @foreach (var s in SpeciesOptions)
                 {
@@ -38,7 +38,7 @@
 
         <label>
             Raza
-            <select @onchange="OnBreedChanged" class="form-select">
+            <select @onchange="OnBreedChanged" class="form-select" value="@selectedBreed">
                 <option value="">Todas</option>
                 @foreach (var b in BreedOptions)
                 {
@@ -49,7 +49,7 @@
 
         <label>
             Ubicación
-            <select @onchange="OnLocationChanged" class="form-select">
+            <select @onchange="OnLocationChanged" class="form-select" value="@selectedLocation">
                 <option value="">Todas</option>
                 @foreach (var l in LocationOptions)
                 {
@@ -60,7 +60,7 @@
 
         <label>
             Estado
-            <select @onchange="OnStatusChanged" class="form-select">
+            <select @onchange="OnStatusChanged" class="form-select" value="@selectedStatus">
                 <option value="">Todos</option>
                 @foreach (var st in StatusOptions)
                 {
@@ -71,12 +71,11 @@
 
         <label>
             Buscar
-            <input placeholder="Texto" @bind="searchText" @bind:event="oninput" class="form-control" />
+            <input placeholder="Texto" @bind="searchText" @bind:event="oninput" @bind:after="ResetPagination" class="form-control" />
         </label>
 
         <button class="secondary-btn" @onclick="ClearFilters">Limpiar</button>
     </div>
-    }
 
     <div class="cards-grid">
         @if (Filtered.Any())
@@ -98,6 +97,7 @@
             <div class="empty-state">No se encontraron reportes de mascotas perdidas.</div>
         }
     </div>
+    }
 </section>
 
 @code {
@@ -128,10 +128,28 @@
 
     private void LoadMore() => pageSize += 6;
 
-    private void OnSpeciesChanged(ChangeEventArgs e) => selectedSpecies = e?.Value?.ToString() ?? string.Empty;
-    private void OnBreedChanged(ChangeEventArgs e) => selectedBreed = e?.Value?.ToString() ?? string.Empty;
-    private void OnLocationChanged(ChangeEventArgs e) => selectedLocation = e?.Value?.ToString() ?? string.Empty;
-    private void OnStatusChanged(ChangeEventArgs e) => selectedStatus = e?.Value?.ToString() ?? string.Empty;
+    private void ResetPagination() => pageSize = 6;
+
+    private void OnSpeciesChanged(ChangeEventArgs e)
+    {
+        selectedSpecies = e?.Value?.ToString() ?? string.Empty;
+        ResetPagination();
+    }
+    private void OnBreedChanged(ChangeEventArgs e)
+    {
+        selectedBreed = e?.Value?.ToString() ?? string.Empty;
+        ResetPagination();
+    }
+    private void OnLocationChanged(ChangeEventArgs e)
+    {
+        selectedLocation = e?.Value?.ToString() ?? string.Empty;
+        ResetPagination();
+    }
+    private void OnStatusChanged(ChangeEventArgs e)
+    {
+        selectedStatus = e?.Value?.ToString() ?? string.Empty;
+        ResetPagination();
+    }
 
     private void ClearFilters()
     {

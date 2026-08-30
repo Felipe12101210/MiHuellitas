@@ -18,6 +18,8 @@ public class HomePage : ContentPage
 
     private View BuildContent()
     {
+        // Loading state is intentionally omitted: the mock catalog is a synchronous,
+        // in-memory service, so there is no async fetch to wait for.
         var root = new VerticalStackLayout { Spacing = 16, Padding = new Thickness(12, 18) };
 
         // Header
@@ -29,12 +31,12 @@ public class HomePage : ContentPage
         // Hero
         var hero = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition(GridLength.Star), new ColumnDefinition(new GridLength(120)) }, RowDefinitions = new RowDefinitionCollection { new RowDefinition(GridLength.Auto) } };
         var heroText = new VerticalStackLayout { Spacing = 6 };
-        heroText.Children.Add(new Label { Text = "Bienestar animal", FontAttributes = FontAttributes.Bold, FontSize = 12 });
-        heroText.Children.Add(new Label { Text = "Cuidando cada huella con amor y acción.", FontSize = 18, FontAttributes = FontAttributes.Bold });
-        heroText.Children.Add(new Label { Text = "Encuentra animales para adoptar, reporta mascotas perdidas y conecta con fundaciones.", FontSize = 14 });
+        heroText.Children.Add(new Label { Text = "Bienestar animal", Style = Res("Eyebrow") });
+        heroText.Children.Add(new Label { Text = "Cuidando cada huella con amor y acción.", FontSize = 22, FontAttributes = FontAttributes.Bold });
+        heroText.Children.Add(new Label { Text = "Encuentra animales para adoptar, reporta mascotas perdidas y conecta con fundaciones.", Style = Res("MutedText"), FontSize = 14 });
         var ctaRow = new HorizontalStackLayout { Spacing = 8 };
-        ctaRow.Children.Add(new Button { Text = "Adoptar", BackgroundColor = Colors.Green, TextColor = Colors.White, Command = new Command(async () => await Shell.Current.GoToAsync("/adoptions")) });
-        ctaRow.Children.Add(new Button { Text = "Campañas", BackgroundColor = Colors.Blue, TextColor = Colors.White, Command = new Command(async () => await Shell.Current.GoToAsync("/campaigns")) });
+        ctaRow.Children.Add(new Button { Text = "Adoptar", Command = new Command(async () => await SafeGoToAsync("//adoptions")) });
+        ctaRow.Children.Add(new Button { Text = "Campañas", Style = Res("SecondaryButton"), Command = new Command(async () => await SafeGoToAsync("//campaigns")) });
         heroText.Children.Add(ctaRow);
         // place heroText in column 0
         hero.Children.Add(heroText);
@@ -55,16 +57,16 @@ public class HomePage : ContentPage
         root.Children.Add(stats);
 
         // Quick actions
-        root.Children.Add(new Label { Text = "Qué puedes hacer hoy", FontAttributes = FontAttributes.Bold, FontSize = 16 });
+        root.Children.Add(new Label { Text = "Qué puedes hacer hoy", Style = Res("SectionTitle") });
         var actions = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition(), new ColumnDefinition() }, RowSpacing = 8, ColumnSpacing = 8 };
-        var a0 = ActionCard("Adopta", "Explora mascotas disponibles", "/adoptions", "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=800&q=80"); actions.Children.Add(a0); Grid.SetColumn(a0, 0); Grid.SetRow(a0, 0);
-        var a1 = ActionCard("Perdidos", "Reportes recientes", "/lost", "https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=800&q=80"); actions.Children.Add(a1); Grid.SetColumn(a1, 1); Grid.SetRow(a1, 0);
-        var a2 = ActionCard("Encontrados", "Mascotas rescatadas", "/found", "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800&q=80"); actions.Children.Add(a2); Grid.SetColumn(a2, 0); Grid.SetRow(a2, 1);
-        var a3 = ActionCard("Campañas", "Participa en jornadas", "/campaigns", "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=80"); actions.Children.Add(a3); Grid.SetColumn(a3, 1); Grid.SetRow(a3, 1);
+        var a0 = ActionCard("Adopta", "Explora mascotas disponibles", "//adoptions", "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=800&q=80"); actions.Children.Add(a0); Grid.SetColumn(a0, 0); Grid.SetRow(a0, 0);
+        var a1 = ActionCard("Perdidos", "Reportes recientes", "//lost", "https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=800&q=80"); actions.Children.Add(a1); Grid.SetColumn(a1, 1); Grid.SetRow(a1, 0);
+        var a2 = ActionCard("Encontrados", "Mascotas rescatadas", "//found", "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800&q=80"); actions.Children.Add(a2); Grid.SetColumn(a2, 0); Grid.SetRow(a2, 1);
+        var a3 = ActionCard("Campañas", "Participa en jornadas", "//campaigns", "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=80"); actions.Children.Add(a3); Grid.SetColumn(a3, 1); Grid.SetRow(a3, 1);
         root.Children.Add(actions);
 
         // Featured pets
-        root.Children.Add(new Label { Text = "Adopciones destacadas", FontAttributes = FontAttributes.Bold, FontSize = 16 });
+        root.Children.Add(new Label { Text = "Adopciones destacadas", Style = Res("SectionTitle") });
         var featured = new HorizontalStackLayout { Spacing = 8 };
         if (_catalog is null || !_catalog.Adoptions.Any())
         {
@@ -76,24 +78,34 @@ public class HomePage : ContentPage
             {
                 featured.Children.Add(PetCard(pet));
             }
-            root.Children.Add(new ScrollView { Orientation = ScrollOrientation.Horizontal, Content = featured, HeightRequest = 200 });
+            root.Children.Add(new ScrollView { Orientation = ScrollOrientation.Horizontal, Content = featured, HeightRequest = 240 });
         }
 
         // Campaigns
-        root.Children.Add(new Label { Text = "Campañas próximas", FontAttributes = FontAttributes.Bold, FontSize = 16 });
+        root.Children.Add(new Label { Text = "Campañas próximas", Style = Res("SectionTitle") });
         if (_catalog is null || !_catalog.Campaigns.Any())
         {
             root.Children.Add(new Label { Text = "No hay campañas.", HorizontalOptions = LayoutOptions.Center });
         }
         else
         {
-            var campList = new VerticalStackLayout { Spacing = 8 };
+            var campList = new VerticalStackLayout { Spacing = 10 };
             foreach (var c in _catalog.Campaigns.Take(3))
             {
-                var b = new Border { Stroke = Colors.LightGray, StrokeThickness = 1, Padding = 8 };
-                var v = new VerticalStackLayout();
-                v.Children.Add(new Label { Text = c.Title, FontAttributes = FontAttributes.Bold });
-                v.Children.Add(new Label { Text = $"{c.Location} • {c.EventDate:d}", FontSize = 12 });
+                var b = new Border { Padding = 0 };
+                var v = new VerticalStackLayout { Spacing = 8 };
+                if (!string.IsNullOrEmpty(c.ImageUrl))
+                    v.Children.Add(new Image { Source = c.ImageUrl, HeightRequest = 110, Aspect = Aspect.AspectFill });
+                var info = new VerticalStackLayout { Spacing = 6, Padding = new Thickness(12, 6, 12, 12) };
+                info.Children.Add(new Label { Text = c.Title, Style = Res("CardTitle") });
+                info.Children.Add(new Label { Text = c.Organizer, Style = Res("MutedText") });
+                info.Children.Add(new Label { Text = $"{c.Location} • {c.EventDate:dd MMM yyyy}", Style = Res("MutedText") });
+                info.Children.Add(new Label { Text = c.Status, Style = Res("BadgeTextAccent") });
+                v.Children.Add(info);
+
+                var tap = new TapGestureRecognizer();
+                tap.Tapped += async (s, e) => await SafeGoToAsync($"campaigndetail?campaignId={c.Id}");
+                v.GestureRecognizers.Add(tap);
                 b.Content = v;
                 campList.Children.Add(b);
             }
@@ -101,24 +113,35 @@ public class HomePage : ContentPage
         }
 
         // Foundations
-        root.Children.Add(new Label { Text = "Fundaciones destacadas", FontAttributes = FontAttributes.Bold, FontSize = 16 });
+        root.Children.Add(new Label { Text = "Fundaciones destacadas", Style = Res("SectionTitle") });
         if (_catalog is null || !_catalog.Foundations.Any())
         {
             root.Children.Add(new Label { Text = "No hay fundaciones.", HorizontalOptions = LayoutOptions.Center });
         }
         else
         {
-            var fList = new HorizontalStackLayout { Spacing = 8 };
+            var fList = new HorizontalStackLayout { Spacing = 10 };
             foreach (var f in _catalog.Foundations.Take(4))
             {
-                var b = new Border { Stroke = Colors.LightGray, StrokeThickness = 1, Padding = 8 };
-                var v = new VerticalStackLayout();
-                v.Children.Add(new Label { Text = f.Name, FontAttributes = FontAttributes.Bold });
-                v.Children.Add(new Label { Text = f.Location, FontSize = 12 });
+                var b = new Border { Padding = 0, WidthRequest = 180 };
+                var v = new VerticalStackLayout { Spacing = 8 };
+                if (!string.IsNullOrEmpty(f.LogoUrl))
+                    v.Children.Add(new Image { Source = f.LogoUrl, HeightRequest = 80, Aspect = Aspect.AspectFill });
+                var info = new VerticalStackLayout { Spacing = 4, Padding = new Thickness(12, 4, 12, 12) };
+                info.Children.Add(new Label { Text = f.Name, Style = Res("CardTitle") });
+                if (f.IsVerified)
+                    info.Children.Add(new Label { Text = "Verificada", Style = Res("BadgeTextAccent") });
+                info.Children.Add(new Label { Text = f.Location, Style = Res("MutedText") });
+                info.Children.Add(new Label { Text = $"{_catalog.GetPetsByFoundation(f.Id).Count()} mascotas", Style = Res("MutedText") });
+                v.Children.Add(info);
+
+                var tap = new TapGestureRecognizer();
+                tap.Tapped += async (s, e) => await SafeGoToAsync($"foundationdetail?foundationId={f.Id}");
+                v.GestureRecognizers.Add(tap);
                 b.Content = v;
                 fList.Children.Add(b);
             }
-            root.Children.Add(new ScrollView { Orientation = ScrollOrientation.Horizontal, Content = fList, HeightRequest = 120 });
+            root.Children.Add(new ScrollView { Orientation = ScrollOrientation.Horizontal, Content = fList, HeightRequest = 230 });
         }
 
         return new ScrollView { Content = root };
@@ -126,18 +149,21 @@ public class HomePage : ContentPage
 
     private View StatBox(string big, string small)
     {
-        return new VerticalStackLayout { Spacing = 2, HorizontalOptions = LayoutOptions.FillAndExpand, Children = { new Label { Text = big, FontAttributes = FontAttributes.Bold }, new Label { Text = small, FontSize = 12 } } };
+        var b = new Border { Padding = 10, StrokeThickness = 0, BackgroundColor = (Color)Application.Current!.Resources["SurfaceSoft"] };
+        var v = new VerticalStackLayout { Spacing = 2, HorizontalOptions = LayoutOptions.Center, Children = { new Label { Text = big, FontAttributes = FontAttributes.Bold, FontSize = 20 }, new Label { Text = small, Style = Res("MutedText") } } };
+        b.Content = v;
+        return b;
     }
 
     private View ActionCard(string title, string desc, string route, string image)
     {
-        var b = new Border { Stroke = Colors.LightGray, StrokeThickness = 1, Padding = 6 };
-        var v = new VerticalStackLayout { Spacing = 6 };
+        var b = new Border { Padding = 12 };
+        var v = new VerticalStackLayout { Spacing = 8 };
         v.Children.Add(new Image { Source = image, HeightRequest = 80, Aspect = Aspect.AspectFill });
-        v.Children.Add(new Label { Text = title, FontAttributes = FontAttributes.Bold });
-        v.Children.Add(new Label { Text = desc, FontSize = 12 });
-        var btn = new Button { Text = "Ir" };
-        btn.Clicked += async (s, e) => await Shell.Current.GoToAsync(route);
+        v.Children.Add(new Label { Text = title, Style = Res("CardTitle") });
+        v.Children.Add(new Label { Text = desc, Style = Res("MutedText") });
+        var btn = new Button { Text = "Ir", Style = Res("SecondaryButton") };
+        btn.Clicked += async (s, e) => await SafeGoToAsync(route);
         v.Children.Add(btn);
         b.Content = v;
         return b;
@@ -145,15 +171,29 @@ public class HomePage : ContentPage
 
     private View PetCard(MiHuellitas.shared.Models.Pet pet)
     {
-        var b = new Border { Stroke = Colors.LightGray, StrokeThickness = 1, Padding = 6, WidthRequest = 220 };
-        var v = new VerticalStackLayout { Spacing = 6 };
-        if (!string.IsNullOrEmpty(pet.ImageUrl)) v.Children.Add(new Image { Source = pet.ImageUrl, HeightRequest = 100, Aspect = Aspect.AspectFill });
-        v.Children.Add(new Label { Text = pet.Name, FontAttributes = FontAttributes.Bold });
-        v.Children.Add(new Label { Text = $"{pet.Breed} · {pet.Location}", FontSize = 12 });
-        var btn = new Button { Text = "Ver" };
-        btn.Clicked += async (s, e) => await Shell.Current.GoToAsync($"petdetail?petId={pet.Id}");
+        var b = new Border { Padding = 12, WidthRequest = 220 };
+        var v = new VerticalStackLayout { Spacing = 8 };
+        if (!string.IsNullOrEmpty(pet.ImageUrl)) v.Children.Add(new Image { Source = pet.ImageUrl, HeightRequest = 90, Aspect = Aspect.AspectFill });
+        v.Children.Add(new Label { Text = pet.Name, Style = Res("CardTitle") });
+        v.Children.Add(new Label { Text = $"{pet.Breed} · {pet.Location}", Style = Res("MutedText") });
+        var btn = new Button { Text = "Ver", Style = Res("SecondaryButton") };
+        btn.Clicked += async (s, e) => await SafeGoToAsync($"petdetail?petId={pet.Id}");
         v.Children.Add(btn);
         b.Content = v;
         return b;
+    }
+
+    private static Style Res(string key) => (Style)Application.Current!.Resources[key];
+
+    private async Task SafeGoToAsync(string route)
+    {
+        try
+        {
+            await Shell.Current.GoToAsync(route);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Navigation failed ({route}): {ex.Message}");
+        }
     }
 }

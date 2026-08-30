@@ -42,15 +42,22 @@
 
             <div class="feed-box">
                 <h3>Actividad reciente</h3>
-                @foreach (var notification in Catalog.Notifications)
+                @if (!Catalog.Notifications.Any())
                 {
-                    <div class="feed-row">
-                        <span class="dot"></span>
-                        <div>
-                            <strong>@notification.Title</strong>
-                            <p>@notification.Message</p>
+                    <div class="feed-empty">Sin actividad reciente.</div>
+                }
+                else
+                {
+                    @foreach (var notification in Catalog.Notifications)
+                    {
+                        <div class="feed-row">
+                            <span class="dot"></span>
+                            <div>
+                                <strong>@notification.Title</strong>
+                                <p>@notification.Message</p>
+                            </div>
                         </div>
-                    </div>
+                    }
                 }
             </div>
         </div>
@@ -60,21 +67,23 @@
 @code {
     private int ReportsCount => Catalog.Reports?.Count ?? 0;
     private int PublicationsCount => Catalog.Pets?.Count(p => p.ResponsibleName == Catalog.CurrentUser.Name) ?? 0;
-    private int FavoritesCount => 0; // No model for favorites yet; requires domain change to track favorites per user
+    private int FavoritesCount => Catalog.FavoritesCount;
 
     protected override void OnInitialized()
     {
-        Catalog.NotificationsChanged += OnNotificationsChanged;
+        Catalog.NotificationsChanged += OnChanged;
+        Catalog.FavoritesChanged += OnChanged;
     }
 
-    private void OnNotificationsChanged()
+    private void OnChanged()
     {
-        // When reports/notifications change in the mock service, update the UI
+        // Re-render so the favorites count and activity feed stay in sync
         InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()
     {
-        Catalog.NotificationsChanged -= OnNotificationsChanged;
+        Catalog.NotificationsChanged -= OnChanged;
+        Catalog.FavoritesChanged -= OnChanged;
     }
 }

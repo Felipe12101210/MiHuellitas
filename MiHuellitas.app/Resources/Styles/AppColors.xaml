@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- MiHuellitas design palette (mirrors MiHuellitas.web/wwwroot/app.css) -->
+    <Color x:Key="Primary">#F26A4B</Color>
+    <Color x:Key="PrimaryDark">#D7532D</Color>
+    <Color x:Key="Secondary">#F4D57A</Color>
+    <Color x:Key="Accent">#7DC7A4</Color>
+    <Color x:Key="Ink">#172027</Color>
+    <Color x:Key="InkSoft">#5C6770</Color>
+    <Color x:Key="Line">#E8EBEE</Color>
+    <Color x:Key="Surface">#F7F6F3</Color>
+    <Color x:Key="SurfaceSoft">#FFFFFF</Color>
+
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}" />
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource Accent}" />
+    <SolidColorBrush x:Key="InkBrush" Color="{StaticResource Ink}" />
+</ResourceDictionary>

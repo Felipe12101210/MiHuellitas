@@ -477,13 +477,110 @@ img {
 .map-pin {
     position: absolute;
     transform: translate(-50%, -50%);
-    background: var(--primary-dark);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 999px;
-    font-size: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.map-pin .map-pin-dot {
+    color: #fff;
     font-weight: 700;
-    box-shadow: var(--shadow);
+}
+
+.map-pin-name {
+    font-size: 10px;
+    font-weight: 600;
+    background: #fff;
+    border-radius: 4px;
+    padding: 0 3px;
+    color: var(--ink);
+    white-space: nowrap;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+    opacity: 0.75;
+}
+
+.map-pin-name.selected {
+    font-weight: 800;
+    color: var(--primary-dark);
+    opacity: 1;
+}
+
+.map-filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+}
+
+.map-filter select {
+    padding: 9px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface-soft);
+    color: var(--ink);
+    font-size: 0.85rem;
+}
+
+.map-row {
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.map-row.selected {
+    background: #FDEBDD;
+}
+
+.map-row.map-row-flash {
+    animation: mapRowFlash 1.2s ease;
+}
+
+@keyframes mapRowFlash {
+    0% { background: #FDEBDD; }
+    40% { background: #FFE3D3; }
+    100% { background: transparent; }
+}
+
+.map-row-dot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 10px;
+    flex: none;
+}
+
+.map-legend {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+
+.map-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--ink);
+}
+
+.map-legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 9px;
 }
 
 .map-list {
@@ -493,6 +590,8 @@ img {
     padding: 18px;
     display: grid;
     gap: 12px;
+    max-height: 440px;
+    overflow-y: auto;
 }
 
 .mini-item span {
@@ -737,4 +836,489 @@ img {
 button[disabled] {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+/* ============================================================
+   W2 — UI/UX polish (design-system consistency)
+   Builds on existing tokens in :root (--primary, --accent, ...).
+   ============================================================ */
+
+/* ---------- Typography hierarchy (Task 2) ---------- */
+.page-header h1 {
+    letter-spacing: -0.02em;
+    color: var(--ink);
+}
+
+.section-heading h2,
+.panel-card h3,
+.profile-card h2,
+.feed-box h3,
+.associated-pets h3 {
+    letter-spacing: -0.01em;
+    color: var(--ink);
+}
+
+.panel-card p,
+.detail-body p,
+.form-panel p,
+.foundation-box p {
+    line-height: 1.65;
+}
+
+/* Shared "small / muted" helper used across pages */
+.small {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+}
+
+/* ---------- Form controls & filters (Tasks 1, 2, 5) ---------- */
+.form-control,
+.form-select,
+.text-input {
+    width: 100%;
+    padding: 11px 14px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: var(--ink);
+    background: var(--surface-soft);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.form-control:focus,
+.form-select:focus,
+.text-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(242, 106, 75, 0.16);
+}
+
+.form-control::placeholder,
+.form-select::placeholder {
+    color: #aeb6bd;
+}
+
+.filters-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding: 18px;
+    background: var(--surface-soft);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+}
+
+.filters-row label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 150px;
+    flex: 1 1 180px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--ink);
+}
+
+.filters-row .form-control,
+.filters-row .form-select {
+    flex: 1 1 auto;
+}
+
+/* ---------- Page states: empty / error / loading (Task 1) ---------- */
+.loading-state,
+.error-state,
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 36px 20px;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius);
+    background: var(--surface-soft);
+    color: var(--ink-soft);
+    font-weight: 600;
+}
+
+.error-state {
+    border-style: solid;
+    border-color: rgba(242, 106, 75, 0.35);
+    background: rgba(242, 106, 75, 0.06);
+    color: #b03a1f;
+}
+
+.loading-state {
+    color: var(--primary-dark);
+}
+
+.pet-card-placeholder {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px 20px;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius);
+    color: var(--ink-soft);
+    font-weight: 600;
+}
+
+/* ---------- Load more (pagination) (Task 1) ---------- */
+.load-more {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    margin-top: 8px;
+}
+
+/* ---------- Shared buttons (Task 1) ---------- */
+.primary-btn,
+.secondary-btn {
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, color 160ms ease;
+}
+
+.primary-btn:hover,
+.secondary-btn:hover {
+    transform: translateY(-1px);
+}
+
+.secondary-btn:hover {
+    background: rgba(125, 199, 164, 0.22);
+}
+
+a.primary-btn,
+a.secondary-btn {
+    text-align: center;
+}
+
+.link-btn {
+    background: transparent;
+    border: none;
+    color: var(--primary-dark);
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 8px;
+    transition: background 160ms ease;
+}
+
+.link-btn:hover {
+    background: rgba(242, 106, 75, 0.1);
+}
+
+/* ---------- Badges (Task 1) ---------- */
+.badge.adoption {
+    background: rgba(244, 213, 122, 0.35);
+    color: #8a6d1a;
+}
+
+/* ---------- Cards: unified hover & body (Tasks 1, 5) ---------- */
+.action-card,
+.foundation-card,
+.campaign-card {
+    display: flex;
+    flex-direction: column;
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.action-card:hover,
+.pet-card:hover,
+.foundation-card:hover,
+.campaign-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 40px rgba(23, 32, 39, 0.12);
+}
+
+.action-card img,
+.campaign-card img,
+.foundation-card img {
+    width: 100%;
+    height: 230px;
+    object-fit: cover;
+}
+
+.foundation-card .pet-card-body,
+.campaign-card .pet-card-body,
+.action-card .pet-card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.foundation-card .pet-actions,
+.campaign-card .pet-actions {
+    margin-top: auto;
+    padding-top: 14px;
+}
+
+/* ---------- Detail pages (Tasks 1, 5) ---------- */
+.detail-shell .detail-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 28px;
+}
+
+.detail-media img {
+    width: 100%;
+    height: 100%;
+    max-height: 520px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.detail-body h1 {
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    letter-spacing: -0.02em;
+    margin: 0 0 14px;
+}
+
+.detail-body .pet-meta {
+    justify-content: flex-start;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.detail-meta {
+    display: grid;
+    gap: 6px;
+    padding: 14px;
+    background: var(--surface-soft);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    margin: 16px 0;
+}
+
+.detail-meta div {
+    color: var(--ink-soft);
+}
+
+.detail-body .primary-btn,
+.detail-body .secondary-btn {
+    margin: 4px 10px 10px 0;
+}
+
+.foundation-box {
+    background: rgba(125, 199, 164, 0.1);
+    border: 1px solid rgba(125, 199, 164, 0.4);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin: 8px 0 16px;
+}
+
+.foundation-box h4 {
+    margin: 0 0 4px;
+    color: var(--ink);
+}
+
+.report-section {
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+}
+
+.report-section h3 {
+    margin: 0 0 8px;
+}
+
+.associated-pets {
+    margin-top: 20px;
+}
+
+.associated-pets .cards-grid {
+    margin-top: 14px;
+}
+
+/* Not-found / missing content pages */
+.detail-shell > h2,
+.page-shell > h2 {
+    margin-top: 0;
+}
+
+/* ---------- Form publish panel (Task 5) ---------- */
+.form-panel {
+    max-width: 720px;
+    padding: 24px;
+    background: var(--surface-soft);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 10px 24px rgba(23, 32, 39, 0.05);
+}
+
+.form-panel .toast-notification {
+    position: static;
+    margin-bottom: 16px;
+    display: inline-flex;
+}
+
+/* ---------- Toasts: consistent success feedback (Task 4) ---------- */
+.toast-notification {
+    border-left: 4px solid var(--accent);
+}
+
+.toast-content strong {
+    color: var(--ink);
+}
+
+.toast-content strong::before {
+    content: "✓ ";
+    color: var(--accent);
+    font-weight: 800;
+}
+
+/* ---------- Profile (Task 2) ---------- */
+.profile-card h2 {
+    margin: 6px 0 4px;
+    font-size: 1.4rem;
+}
+
+.profile-card p {
+    margin: 4px 0;
+    color: var(--ink-soft);
+}
+
+.feed-box h3 {
+    margin: 0 0 12px;
+}
+
+/* ---------- Hero composition (Task 6) ---------- */
+.hero-section {
+    padding: 46px 0 26px;
+    position: relative;
+}
+
+.hero-copy h1 {
+    letter-spacing: -0.03em;
+}
+
+.hero-copy p {
+    max-width: 46ch;
+}
+
+/* ---------- Home spotlight: campaigns & foundations (Task 6) ---------- */
+.spotlight-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.spotlight-card {
+    background: var(--surface-soft);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(23, 32, 39, 0.04);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.spotlight-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 40px rgba(23, 32, 39, 0.12);
+}
+
+.spotlight-card img {
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+    display: block;
+}
+
+.spotlight-body {
+    padding: 14px 16px 16px;
+}
+
+.spotlight-body h3 {
+    margin: 6px 0 4px;
+    font-size: 1.05rem;
+}
+
+.spotlight-body > span {
+    display: inline-block;
+    margin: 6px 0 8px;
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+}
+
+.spotlight-body .badge {
+    margin-bottom: 6px;
+}
+
+/* ---------- Footer contact response (Task 5) ---------- */
+.footer-contacto-msg {
+    margin: 4px 0 0;
+    font-size: 0.85rem;
+    color: var(--accent) !important;
+}
+
+/* ---------- Responsive (Task 3) ---------- */
+@media (max-width: 960px) {
+    .detail-shell .detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .spotlight-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .spotlight-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filters-row {
+        padding: 14px;
+        gap: 12px;
+    }
+
+    .filters-row label {
+        flex-basis: 100%;
+        min-width: 0;
+    }
+}
+
+/* Mobile nav refinement for very small screens (~360px) */
+@media (max-width: 640px) {
+    .top-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 12px;
+    }
+
+    .top-nav .brand {
+        font-size: 1.2rem;
+    }
+
+    .top-nav .profile-pill {
+        display: none;
+    }
+}
+
+/* ---------- Feed empty state (Task 2) ---------- */
+.feed-empty {
+    padding: 16px 8px;
+    text-align: center;
+    color: var(--ink-soft);
+}
+
+/* ---------- Foundation grid: 3 cols desktop (Task 3) ---------- */
+.foundation-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 960px) {
+    .foundation-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .foundation-grid {
+        grid-template-columns: 1fr;
+    }
 }

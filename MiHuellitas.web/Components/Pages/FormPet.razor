@@ -17,26 +17,32 @@
     <div class="form-panel">
         @if (!string.IsNullOrEmpty(formMessage))
         {
-            <div class="toast-notification">@formMessage</div>
+            <div class="toast-notification">
+                <div class="toast-content">
+                    <strong>Publicación</strong>
+                    <div class="toast-message">@formMessage</div>
+                </div>
+                <button class="toast-close" aria-label="Cerrar" @onclick="ClearToast">×</button>
+            </div>
         }
 
         <div class="report-form">
             <label for="name">Nombre *</label>
-            <input id="name" class="form-control" @bind="model.Name" />
+            <input id="name" class="form-control" @bind="model.Name" placeholder="Ej. Luna" />
             @if (!string.IsNullOrEmpty(nameError))
             {
                 <div class="field-error">@nameError</div>
             }
 
             <label for="species">Especie *</label>
-            <input id="species" class="form-control" @bind="model.Species" />
+            <input id="species" class="form-control" @bind="model.Species" placeholder="Ej. Perro" />
             @if (!string.IsNullOrEmpty(speciesError))
             {
                 <div class="field-error">@speciesError</div>
             }
 
             <label for="breed">Raza</label>
-            <input id="breed" class="form-control" @bind="model.Breed" />
+            <input id="breed" class="form-control" @bind="model.Breed" placeholder="Ej. Labrador" />
 
             <label for="age">Edad (meses)</label>
             <input id="age" type="number" class="form-control" @bind="model.AgeMonths" />
@@ -48,7 +54,7 @@
             <input id="size" class="form-control" @bind="model.Size" />
 
             <label for="location">Ubicación</label>
-            <input id="location" class="form-control" @bind="model.Location" />
+            <input id="location" class="form-control" @bind="model.Location" placeholder="Ej. Chapinero, Bogotá" />
 
             <label for="listing">Tipo de anuncio *</label>
             <select id="listing" class="form-control" @bind="model.ListingType">
@@ -67,10 +73,10 @@
             </select>
 
             <label for="responsible">Responsable</label>
-            <input id="responsible" class="form-control" @bind="model.ResponsibleName" />
+            <input id="responsible" class="form-control" @bind="model.ResponsibleName" placeholder="Nombre del responsable" />
 
             <label for="phone">Teléfono de contacto</label>
-            <input id="phone" class="form-control" @bind="model.ContactPhone" />
+            <input id="phone" class="form-control" @bind="model.ContactPhone" placeholder="+57 300 000 0000" />
 
             <label for="foundation">Fundación (opcional)</label>
             <select id="foundation" class="form-control" @onchange="OnFoundationChanged">
@@ -82,7 +88,7 @@
             </select>
 
             <label for="description">Descripción</label>
-            <textarea id="description" class="form-control" @bind="model.Description"></textarea>
+            <textarea id="description" class="form-control" @bind="model.Description" placeholder="Breve descripción de la mascota"></textarea>
 
             <div style="margin-top:12px; display:flex; gap:8px;">
                 <button class="primary-btn" @onclick="Submit">Publicar</button>
@@ -153,4 +159,6 @@
     {
         Nav.NavigateTo("/");
     }
+
+    private void ClearToast() => formMessage = string.Empty;
 }

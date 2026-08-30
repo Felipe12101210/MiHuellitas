@@ -7,44 +7,56 @@
     xmlns:pages="clr-namespace:MiHuellitas.app.Pages"
     Title="MiHuellitas.app">
 
+    <Shell.FlyoutHeader>
+        <Grid BackgroundColor="{StaticResource Primary}" Padding="20,28,20,24">
+            <VerticalStackLayout Spacing="3">
+                <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                    <Label Text="🐾" FontSize="28" TextColor="White" VerticalOptions="Center" />
+                    <Label Text="MiHuellitas" TextColor="White" FontSize="22" FontAttributes="Bold" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <Label Text="Cuidando cada huella con amor" TextColor="White" Opacity="0.85" FontSize="12" />
+            </VerticalStackLayout>
+        </Grid>
+    </Shell.FlyoutHeader>
+
     <FlyoutItem Title="Inicio" FlyoutDisplayOptions="AsMultipleItems">
-        <ShellContent Title="Home" ContentTemplate="{DataTemplate pages:HomePage}" Route="/" />
+        <ShellContent Title="Home" ContentTemplate="{DataTemplate pages:HomePage}" Route="home" />
     </FlyoutItem>
 
     <FlyoutItem Title="Adopciones">
-        <ShellContent Title="Adopciones" ContentTemplate="{DataTemplate pages:AdoptionsPage}" Route="/adoptions" />
+        <ShellContent Title="Adopciones" ContentTemplate="{DataTemplate pages:AdoptionsPage}" Route="adoptions" />
     </FlyoutItem>
 
     <FlyoutItem Title="Perdidos">
-        <ShellContent Title="Perdidos" ContentTemplate="{DataTemplate pages:LostPetsPage}" Route="/lost" />
+        <ShellContent Title="Perdidos" ContentTemplate="{DataTemplate pages:LostPetsPage}" Route="lost" />
     </FlyoutItem>
 
     <FlyoutItem Title="Encontrados">
-        <ShellContent Title="Encontrados" ContentTemplate="{DataTemplate pages:FoundPetsPage}" Route="/found" />
+        <ShellContent Title="Encontrados" ContentTemplate="{DataTemplate pages:FoundPetsPage}" Route="found" />
     </FlyoutItem>
 
     <FlyoutItem Title="Fundaciones">
-        <ShellContent Title="Fundaciones" ContentTemplate="{DataTemplate pages:FoundationsPage}" Route="/foundations" />
+        <ShellContent Title="Fundaciones" ContentTemplate="{DataTemplate pages:FoundationsPage}" Route="foundations" />
     </FlyoutItem>
 
     <FlyoutItem Title="Campañas">
-        <ShellContent Title="Campañas" ContentTemplate="{DataTemplate pages:CampaignsPage}" Route="/campaigns" />
+        <ShellContent Title="Campañas" ContentTemplate="{DataTemplate pages:CampaignsPage}" Route="campaigns" />
     </FlyoutItem>
 
     <FlyoutItem Title="Mapa">
-        <ShellContent Title="Mapa" ContentTemplate="{DataTemplate pages:MapPage}" Route="/map" />
+        <ShellContent Title="Mapa" ContentTemplate="{DataTemplate pages:MapPage}" Route="map" />
     </FlyoutItem>
 
     <FlyoutItem Title="Notificaciones">
-        <ShellContent Title="Notificaciones" ContentTemplate="{DataTemplate pages:NotificationsPage}" Route="/notifications" />
+        <ShellContent Title="Notificaciones" ContentTemplate="{DataTemplate pages:NotificationsPage}" Route="notifications" />
     </FlyoutItem>
 
     <FlyoutItem Title="Perfil">
-        <ShellContent Title="Perfil" ContentTemplate="{DataTemplate pages:ProfilePage}" Route="/profile" />
+        <ShellContent Title="Perfil" ContentTemplate="{DataTemplate pages:ProfilePage}" Route="profile" />
     </FlyoutItem>
 
     <FlyoutItem Title="Publicar">
-        <ShellContent Title="Publicar" ContentTemplate="{DataTemplate pages:PublishPage}" Route="/publish" />
+        <ShellContent Title="Publicar" ContentTemplate="{DataTemplate pages:PublishPage}" Route="publish" />
     </FlyoutItem>
 
 </Shell>

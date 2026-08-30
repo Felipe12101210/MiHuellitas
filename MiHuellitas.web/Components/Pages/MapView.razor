@@ -1,6 +1,8 @@
 @page "/mapa"
+@using MiHuellitas.shared.Data
 @inject MiHuellitas.shared.Services.MockCatalogService Catalog
 @inject NavigationManager Nav
+@inject IJSRuntime JS
 
 <PageTitle>Mapa</PageTitle>
 
@@ -10,22 +12,80 @@
             <p class="eyebrow">Ubicaciones relevantes</p>
             <h1>Mapa</h1>
         </div>
+        <p class="small" style="color:var(--ink-soft);">Ubicaciones aproximadas · mapa ilustrativo</p>
     </header>
 
+    <div class="map-filter">
+        <label class="small" for="species-filter" style="color:var(--ink-soft); margin-right:8px;">Filtrar por especie</label>
+        <select id="species-filter" @bind="speciesFilter" @bind:after="OnSpeciesFilterChanged">
+            <option value="">Todas</option>
+            <option value="Perro">Perro</option>
+            <option value="Gato">Gato</option>
+        </select>
+    </div>
+
     <div class="map-panel">
-        <div class="map-surface" style="position:relative; height:420px; background:#f3f6f8; border-radius:8px;">
-            @foreach (var pet in Catalog.Pets)
+        <div class="map-surface" style="height:440px; min-height:440px; background:#EFF4F5;">
+            @* Drawn backdrop: parks, plaza, river, city blocks and streets (no external map services) *@
+            <div style="position:absolute; top:14%; left:64%; width:28%; height:20%; background:#CDE5CF; border-radius:10px;"></div>
+            <div style="position:absolute; top:56%; left:12%; width:20%; height:32%; background:#EAF4FB; border-radius:10px;"></div>
+            <div style="position:absolute; top:5%; left:5%; width:12%; height:9%; background:#D8EED9; border-radius:6px;"></div>
+            <div style="position:absolute; top:44%; left:46%; width:13%; height:11%; background:#FDF1E7; border-radius:8px;"></div>
+            <span style="position:absolute; top:47%; left:50%; transform:translateX(-50%); font-size:8px; color:#B98A63; font-style:italic;">Plaza</span>
+
+            @* City blocks (cartilla de ciudad) *@
+            @foreach (var s in BlockStyles)
             {
-                var left = ((pet.Id * 23) % 70) + 5;
-                var top = ((pet.Id * 37) % 60) + 5;
-                <button class="map-pin" style=$"position:absolute; left:@left% ; top:@top% ;" @onclick="() => SelectPet(pet)">
-                    <span>@pet.Name</span>
+                <div style="position:absolute; background:#F7F8FA; border-radius:2px; @s"></div>
+            }
+
+            @* Horizontal streets *@
+            <div style="position:absolute; top:20%; left:0; width:100%; height:8px; background:#fff;"></div>
+            <span style="position:absolute; top:20%; left:10px; font-size:10px; color:#9AA6AD; font-style:italic;">Calle 63</span>
+            <div style="position:absolute; top:42%; left:0; width:100%; height:8px; background:#fff;"></div>
+            <span style="position:absolute; top:42%; left:10px; font-size:10px; color:#9AA6AD; font-style:italic;">Calle 45</span>
+            <div style="position:absolute; top:64%; left:0; width:100%; height:8px; background:#fff;"></div>
+            <span style="position:absolute; top:64%; left:10px; font-size:10px; color:#9AA6AD; font-style:italic;">Calle 26</span>
+            <div style="position:absolute; top:86%; left:0; width:100%; height:8px; background:#fff;"></div>
+            <span style="position:absolute; top:86%; left:10px; font-size:10px; color:#9AA6AD; font-style:italic;">Calle 13</span>
+
+            @* Vertical avenues *@
+            <div style="position:absolute; left:22%; top:0; width:8px; height:100%; background:#fff;"></div>
+            <span style="position:absolute; left:22%; top:8px; font-size:10px; color:#9AA6AD; font-style:italic; white-space:nowrap;">Av. Caracas</span>
+            <div style="position:absolute; left:46%; top:0; width:8px; height:100%; background:#fff;"></div>
+            <span style="position:absolute; left:46%; top:8px; font-size:10px; color:#9AA6AD; font-style:italic; white-space:nowrap;">Cra 7</span>
+            <div style="position:absolute; left:70%; top:0; width:8px; height:100%; background:#fff;"></div>
+            <span style="position:absolute; left:70%; top:8px; font-size:10px; color:#9AA6AD; font-style:italic; white-space:nowrap;">Cra 13</span>
+            <div style="position:absolute; left:90%; top:0; width:8px; height:100%; background:#fff;"></div>
+            <span style="position:absolute; left:90%; top:8px; font-size:10px; color:#9AA6AD; font-style:italic; white-space:nowrap;">Av. 68</span>
+
+            @* Diagonal streets (rotated white bands) *@
+            <div style="position:absolute; top:30%; left:-10%; width:120%; height:8px; background:#fff; transform:rotate(30deg);"></div>
+            <span style="position:absolute; top:26%; left:12%; font-size:10px; color:#9AA6AD; font-style:italic; transform:rotate(30deg); transform-origin:left center;">Diag. 50</span>
+            <div style="position:absolute; top:62%; left:-10%; width:120%; height:8px; background:#fff; transform:rotate(-30deg);"></div>
+            <span style="position:absolute; top:66%; left:70%; font-size:10px; color:#9AA6AD; font-style:italic; transform:rotate(-30deg); transform-origin:left center;">Av. Jiménez</span>
+
+            @* Pins projected with the same lat/lon -> % box as MAUI *@
+            @foreach (var pet in FilteredPets)
+            {
+                var left = Clamp(LonToLeft(pet.Longitude), 2, 98);
+                var top = Clamp(LatToTop(pet.Latitude), 2, 98);
+                var isCat = IsCat(pet);
+                var selected = selectedPet?.Id == pet.Id;
+                var pinColor = selected ? "var(--primary-dark)" : (isCat ? "#E8A33D" : "#F26A4B");
+                var size = selected ? "26px" : "18px";
+                var fontSize = selected ? "14px" : "10px";
+                var opacity = selected ? "1" : "0.85";
+                <button class="map-pin" style="left:@(left)%; top:@(top)%; opacity:@opacity;"
+                        @onclick="() => SelectPet(pet)">
+                    <span class="map-pin-dot" style="width:@size; height:@size; background:@pinColor; line-height:@size; font-size:@fontSize; border:3px solid #fff; border-radius:50%; box-shadow:0 1px 3px rgba(0,0,0,0.25); display:block; text-align:center;">@(isCat ? "🐱" : "🐶")</span>
+                    <span class="map-pin-name @(selected ? "selected" : "")">@pet.Name</span>
                 </button>
             }
 
             @if (selectedPet is not null)
             {
-                <div class="map-info" style="position:absolute; right:12px; bottom:12px; background:white; padding:12px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.08); width:260px;">
+                <div class="map-info" style="position:absolute; right:12px; bottom:12px; background:white; padding:12px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.08); width:260px; z-index:5;">
                     <h4>@selectedPet.Name</h4>
                     <p>@selectedPet.Species - @selectedPet.Breed</p>
                     <p class="location">📍 @selectedPet.Location</p>
@@ -38,28 +98,94 @@
         </div>
 
         <div class="map-list">
-            @foreach (var pet in Catalog.Pets)
+            @foreach (var pet in FilteredPets)
             {
-                <div class="mini-item" style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid var(--line);">
-                    <div>
-                        <strong>@pet.Name</strong>
-                        <div class="small">@pet.Location</div>
+                var sel = selectedPet?.Id == pet.Id;
+                var isCat = IsCat(pet);
+                var dotColor = sel ? "var(--primary-dark)" : (isCat ? "#E8A33D" : "#F26A4B");
+                <div id="map-row-@pet.Id" class="mini-item map-row @(sel ? "selected" : "")" style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid var(--line);"
+                     @onclick="() => SelectPet(pet)">
+                    <div style="display:flex; align-items:center; gap:8px; min-width:0;">
+                        <span class="map-row-dot" style="flex:none; width:14px; height:14px; border-radius:50%; background:@dotColor;">@(isCat ? "🐱" : "🐶")</span>
+                        <div style="min-width:0;">
+                            <strong>@pet.Name</strong>
+                            <div class="small" style="color:var(--ink-soft);">@pet.Location</div>
+                        </div>
                     </div>
                     <div>
                         <button class="link-btn" @onclick="() => SelectPet(pet)">Mostrar</button>
                     </div>
                 </div>
             }
+            @if (!FilteredPets.Any())
+            {
+                <div class="small" style="color:var(--ink-soft); padding:8px 0;">No hay mascotas de esta especie en el mapa.</div>
+            }
         </div>
+    </div>
+
+    <div class="map-legend">
+        <span class="map-legend-item"><span class="map-legend-dot" style="background:#F26A4B;">🐶</span> Perro</span>
+        <span class="map-legend-item"><span class="map-legend-dot" style="background:#E8A33D;">🐱</span> Gato</span>
+        <span class="small" style="color:var(--ink-soft);">Ubicaciones aproximadas</span>
     </div>
 </section>
 
 @code {
     private MiHuellitas.shared.Models.Pet? selectedPet;
+    private string speciesFilter = string.Empty;
+    private List<string> BlockStyles { get; } = new();
+
+    private const double LatMin = MiHuellitas.shared.Data.MockData.LAT_MIN;
+    private const double LatMax = MiHuellitas.shared.Data.MockData.LAT_MAX;
+    private const double LonMin = MiHuellitas.shared.Data.MockData.LON_MIN;
+    private const double LonMax = MiHuellitas.shared.Data.MockData.LON_MAX;
+
+    private IEnumerable<MiHuellitas.shared.Models.Pet> FilteredPets =>
+        Catalog.Pets
+            .Where(p => string.IsNullOrEmpty(speciesFilter) || SpeciesKey(p) == speciesFilter)
+            .Where(p => p.Latitude >= LatMin && p.Latitude <= LatMax && p.Longitude >= LonMin && p.Longitude <= LonMax);
+
+    public MapView()
+    {
+        InitBlocks();
+    }
+
+    private void InitBlocks()
+    {
+        double[][] rows = { new[] { 0.22, 0.42 }, new[] { 0.44, 0.64 }, new[] { 0.66, 0.86 } };
+        double[][] cols = { new[] { 0.238, 0.46 }, new[] { 0.478, 0.70 }, new[] { 0.718, 0.90 } };
+        foreach (var row in rows)
+        {
+            double rTop = row[0], rBot = row[1];
+            foreach (var col in cols)
+            {
+                double cLeft = col[0], cRight = col[1];
+                double top = rTop + (rBot - rTop) * 0.25;
+                double h = (rBot - rTop) * 0.5;
+                double w = (cRight - cLeft) * 0.42;
+                BlockStyles.Add($"left:{(cLeft + (cRight - cLeft) * 0.06) * 100:0.#}%; top:{top * 100:0.#}%; width:{w * 100:0.#}%; height:{h * 100:0.#}%;");
+                BlockStyles.Add($"left:{(cLeft + (cRight - cLeft) * 0.52) * 100:0.#}%; top:{top * 100:0.#}%; width:{w * 100:0.#}%; height:{h * 100:0.#}%;");
+            }
+        }
+    }
 
     private void SelectPet(MiHuellitas.shared.Models.Pet pet)
     {
-        selectedPet = pet;
+        if (selectedPet?.Id != pet.Id)
+        {
+            selectedPet = pet;
+        }
+        else
+        {
+            selectedPet = null;
+        }
+        _ = JS.InvokeVoidAsync("miHuellitasFocusRow", $"map-row-{pet.Id}");
+    }
+
+    private void OnSpeciesFilterChanged()
+    {
+        selectedPet = null;
     }
 
     private void NavigateToPet(MiHuellitas.shared.Models.Pet pet)
@@ -73,4 +199,16 @@
         };
         Nav.NavigateTo(route);
     }
+
+    private static bool IsCat(MiHuellitas.shared.Models.Pet p) =>
+        p.Species.Contains("Gato", StringComparison.OrdinalIgnoreCase);
+
+    private static string SpeciesKey(MiHuellitas.shared.Models.Pet p) => IsCat(p) ? "Gato" : "Perro";
+
+    // Project (lat, lon) -> percentage of the surface, using the SAME Bogotá box
+    // as the MAUI map so pins land in equivalent positions.
+    private static double LatToTop(double lat) => (LatMax - lat) / (LatMax - LatMin) * 100;
+    private static double LonToLeft(double lon) => (lon - LonMin) / (LonMax - LonMin) * 100;
+
+    private static double Clamp(double value, double min, double max) => Math.Clamp(value, min, max);
 }

@@ -24,20 +24,20 @@
 
 <section class="info-strip">
     <div class="stat-box">
-        <strong>120+</strong>
-        <span>Casos atendidos</span>
+        <strong>@Catalog.Pets.Count</strong>
+        <span>Mascotas</span>
     </div>
     <div class="stat-box">
-        <strong>40</strong>
+        <strong>@Catalog.Foundations.Count</strong>
         <span>Fundaciones</span>
     </div>
     <div class="stat-box">
-        <strong>18</strong>
-        <span>Campañas activas</span>
+        <strong>@Catalog.Campaigns.Count</strong>
+        <span>Campañas</span>
     </div>
     <div class="stat-box">
-        <strong>96%</strong>
-        <span>Seguimiento exitoso</span>
+        <strong>@Catalog.Adoptions.Count</strong>
+        <span>Adopciones</span>
     </div>
 </section>
 
@@ -75,13 +75,66 @@
         <p class="eyebrow">Adopciones destacadas</p>
         @foreach (var pet in Catalog.Adoptions.Take(3))
         {
-            <div class="mini-item">
+            <a href="@PetRoute(pet)" class="mini-item">
                 <strong>@pet.Name</strong>
                 <span>@pet.Breed · @pet.Location</span>
-            </div>
+            </a>
         }
     </div>
 </section>
+
+@if (Catalog.Campaigns.Any())
+{
+    <section class="section-block">
+        <div class="section-heading">
+            <p class="eyebrow">Próximas jornadas</p>
+            <h2>Campañas próximas</h2>
+        </div>
+
+        <div class="spotlight-grid">
+            @foreach (var campaign in Catalog.Campaigns.Take(3))
+            {
+                <a class="spotlight-card" href="/campanas/@campaign.Id">
+                    <img src="@campaign.ImageUrl" alt="@campaign.Title" />
+                    <div class="spotlight-body">
+                        <span class="badge found">@campaign.Status</span>
+                        <h3>@campaign.Title</h3>
+                        <span>📍 @campaign.Location · @campaign.EventDate.ToString("dd MMM yyyy")</span>
+                        <p>@campaign.Description</p>
+                    </div>
+                </a>
+            }
+        </div>
+    </section>
+}
+
+@if (Catalog.Foundations.Any())
+{
+    <section class="section-block">
+        <div class="section-heading">
+            <p class="eyebrow">Aliados</p>
+            <h2>Fundaciones destacadas</h2>
+        </div>
+
+        <div class="spotlight-grid">
+            @foreach (var foundation in Catalog.Foundations.Take(3))
+            {
+                <a class="spotlight-card" href="/fundaciones/@foundation.Id">
+                    <img src="@foundation.LogoUrl" alt="@foundation.Name" />
+                    <div class="spotlight-body">
+                        @if (foundation.IsVerified)
+                        {
+                            <span class="badge found">Verificada</span>
+                        }
+                        <h3>@foundation.Name</h3>
+                        <span>📍 @foundation.Location</span>
+                        <p>@(Catalog.GetPetsByFoundation(foundation.Id).Count()) mascotas registradas</p>
+                    </div>
+                </a>
+            }
+        </div>
+    </section>
+}
 
 <section class="section-block">
     <div class="section-heading">
@@ -102,6 +155,7 @@
                    <h3>@pet.Name</h3>
                    <p class="location">📍 @pet.Location</p>
                    <p>@pet.Description</p>
+                   <a href="@PetRoute(pet)" class="text-link">Ver detalle</a>
                 </div>
             </article>
         }
@@ -140,4 +194,12 @@
             "/campanas"
         )
     ];
+
+    private static string PetRoute(MiHuellitas.shared.Models.Pet pet) => pet.ListingType switch
+    {
+        MiHuellitas.shared.Enums.ListingType.Adoption => $"/adopciones/{pet.Id}",
+        MiHuellitas.shared.Enums.ListingType.Lost => $"/perdidos/{pet.Id}",
+        MiHuellitas.shared.Enums.ListingType.Found => $"/encontrados/{pet.Id}",
+        _ => $"/adopciones/{pet.Id}",
+    };
 }
