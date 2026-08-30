@@ -1,0 +1,67 @@
+@page "/fundaciones/{Id:int}"
+@inject MiHuellitas.shared.Services.MockCatalogService Catalog
+@using MiHuellitas.shared.Models
+
+<PageTitle>Detalle fundación</PageTitle>
+
+@{
+    var foundation = Catalog.GetFoundationById(Id);
+}
+
+@if (foundation is null)
+{
+    <section class="page-shell">
+        <h2>Fundación no encontrada</h2>
+        <p>La fundación solicitada no existe.</p>
+        <a class="secondary-btn" href="/fundaciones">Volver a fundaciones</a>
+    </section>
+}
+else
+{
+    <section class="page-shell detail-shell">
+        <div class="detail-grid">
+            <div class="detail-media">
+                <img src="@foundation.LogoUrl" alt="@foundation.Name" />
+            </div>
+            <div class="detail-body">
+                <h1>@foundation.Name</h1>
+                <p class="location">📍 @foundation.Location</p>
+                <p>@foundation.Description</p>
+
+                <div class="contact-box">
+                    <h4>Contacto</h4>
+                    <p><strong>@foundation.ContactPhone</strong></p>
+                    <p>@foundation.Email</p>
+                </div>
+
+                <section class="associated-pets">
+                    <h3>Mascotas asociadas</h3>
+                    @{
+                        var pets = Catalog.GetPetsByFoundation(foundation.Id);
+                    }
+
+                    @if (!pets.Any())
+                    {
+                        <div class="empty-state">Esta fundación actualmente no tiene animales registrados.</div>
+                    }
+                    else
+                    {
+                        <div class="cards-grid">
+                            @foreach (var pet in pets)
+                            {
+                                <PetCard Pet="pet" />
+                            }
+                        </div>
+                    }
+                </section>
+
+                <a class="secondary-btn" href="/fundaciones">Volver a fundaciones</a>
+            </div>
+        </div>
+    </section>
+} 
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+}

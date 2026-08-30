@@ -28,6 +28,17 @@ public static class MockData
             Email = "contacto@rescatevivo.org",
             LogoUrl = "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=400&q=80",
             IsVerified = true
+        },
+        new Foundation
+        {
+            Id = 3,
+            Name = "Casa Sin Huellas",
+            Description = "Centro de apoyo temporal sin registro de mascotas actualmente.",
+            Location = "Cali, Colombia",
+            ContactPhone = "+57 320 000 0000",
+            Email = "contacto@casasinhuellas.org",
+            LogoUrl = "https://images.unsplash.com/photo-1543872084-c7bd3822856f?auto=format&fit=crop&w=400&q=80",
+            IsVerified = false
         }
     ];
 

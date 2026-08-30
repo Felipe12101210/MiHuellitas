@@ -1,31 +1,156 @@
-<form >
-    <h2>Busca a tu compañia ideal</h2>
+@page "/publicar"
+@inject MiHuellitas.shared.Services.MockCatalogService Catalog
+@inject NavigationManager Nav
+@using MiHuellitas.shared.Models
+@using MiHuellitas.shared.Enums
 
-    <div>
-        <label>Gustos</label>
-        <input type="text">
-    </div>
-    <div>
-        <label>edad</label>
-        <input type="number">
-    </div>
-    <div>
-        <select name="Raza" id="">
-            @foreach(var raza in raza){
-                <option value="">@raza</option>
+<PageTitle>Publicar mascota</PageTitle>
+
+<section class="page-shell">
+    <header class="page-header">
+        <div>
+            <p class="eyebrow">Publicar</p>
+            <h1>Publicar mascota</h1>
+        </div>
+    </header>
+
+    <div class="form-panel">
+        @if (!string.IsNullOrEmpty(formMessage))
+        {
+            <div class="toast-notification">@formMessage</div>
+        }
+
+        <div class="report-form">
+            <label for="name">Nombre *</label>
+            <input id="name" class="form-control" @bind="model.Name" />
+            @if (!string.IsNullOrEmpty(nameError))
+            {
+                <div class="field-error">@nameError</div>
             }
-            
-        </select>
+
+            <label for="species">Especie *</label>
+            <input id="species" class="form-control" @bind="model.Species" />
+            @if (!string.IsNullOrEmpty(speciesError))
+            {
+                <div class="field-error">@speciesError</div>
+            }
+
+            <label for="breed">Raza</label>
+            <input id="breed" class="form-control" @bind="model.Breed" />
+
+            <label for="age">Edad (meses)</label>
+            <input id="age" type="number" class="form-control" @bind="model.AgeMonths" />
+
+            <label for="sex">Sexo</label>
+            <input id="sex" class="form-control" @bind="model.Sex" />
+
+            <label for="size">Tamaño</label>
+            <input id="size" class="form-control" @bind="model.Size" />
+
+            <label for="location">Ubicación</label>
+            <input id="location" class="form-control" @bind="model.Location" />
+
+            <label for="listing">Tipo de anuncio *</label>
+            <select id="listing" class="form-control" @bind="model.ListingType">
+                @foreach (var lt in Enum.GetValues(typeof(ListingType)).Cast<ListingType>())
+                {
+                    <option value="@lt">@lt</option>
+                }
+            </select>
+
+            <label for="status">Estado *</label>
+            <select id="status" class="form-control" @bind="model.Status">
+                @foreach (var st in Enum.GetValues(typeof(PetStatus)).Cast<PetStatus>())
+                {
+                    <option value="@st">@st</option>
+                }
+            </select>
+
+            <label for="responsible">Responsable</label>
+            <input id="responsible" class="form-control" @bind="model.ResponsibleName" />
+
+            <label for="phone">Teléfono de contacto</label>
+            <input id="phone" class="form-control" @bind="model.ContactPhone" />
+
+            <label for="foundation">Fundación (opcional)</label>
+            <select id="foundation" class="form-control" @onchange="OnFoundationChanged">
+                <option value="">Ninguna</option>
+                @foreach (var f in Catalog.GetFoundations())
+                {
+                    <option value="@f.Id">@f.Name</option>
+                }
+            </select>
+
+            <label for="description">Descripción</label>
+            <textarea id="description" class="form-control" @bind="model.Description"></textarea>
+
+            <div style="margin-top:12px; display:flex; gap:8px;">
+                <button class="primary-btn" @onclick="Submit">Publicar</button>
+                <button class="secondary-btn" @onclick="Cancel">Cancelar</button>
+            </div>
+        </div>
     </div>
-</form>
+</section>
 
-@code{
+@code {
+    private Pet model = new Pet { ListingType = ListingType.Adoption, Status = PetStatus.Available };
+    private string? nameError;
+    private string? speciesError;
+    private string formMessage = string.Empty;
 
-    List<string> raza = new List<string>{
-        "Seleccionar",
-        "Pequines",
-        "Labrador",
-        "Criollo"
-        
-    };
+    private void OnFoundationChanged(ChangeEventArgs e)
+    {
+        var val = e?.Value?.ToString();
+        if (int.TryParse(val, out var id))
+        {
+            model.Foundation = Catalog.GetFoundationById(id);
+        }
+        else
+        {
+            model.Foundation = null;
+        }
+    }
+
+    private void Validate()
+    {
+        nameError = string.IsNullOrWhiteSpace(model.Name) ? "Por favor ingresa un nombre." : string.Empty;
+        speciesError = string.IsNullOrWhiteSpace(model.Species) ? "Por favor ingresa la especie." : string.Empty;
+    }
+
+    private async Task Submit()
+    {
+        Validate();
+        if (!string.IsNullOrEmpty(nameError) || !string.IsNullOrEmpty(speciesError)) return;
+
+        try
+        {
+            var added = Catalog.AddPet(model);
+            formMessage = "Mascota publicada correctamente.";
+
+            // clear form
+            model = new Pet { ListingType = ListingType.Adoption, Status = PetStatus.Available };
+            StateHasChanged();
+
+            // navigate to corresponding listing
+            var route = added.ListingType switch
+            {
+                ListingType.Adoption => "/adopciones",
+                ListingType.Lost => "/perdidos",
+                ListingType.Found => "/encontrados",
+                _ => "/adopciones",
+            };
+
+            await Task.Delay(600);
+            Nav.NavigateTo(route);
+        }
+        catch (Exception ex)
+        {
+            formMessage = "Error al publicar la mascota: " + ex.Message;
+        }
+    }
+
+    private void Cancel()
+    {
+        Nav.NavigateTo("/");
+    }
 }

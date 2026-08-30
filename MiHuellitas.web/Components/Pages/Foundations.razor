@@ -11,27 +11,103 @@
         </div>
     </header>
 
-    <div class="cards-grid foundation-grid">
-        @foreach (var foundation in Catalog.Foundations)
-        {
-            <article class="foundation-card">
-                <img src="@foundation.LogoUrl" alt="@foundation.Name" />
-                <div class="pet-card-body">
-                    <div class="pet-meta">
-                        @if (foundation.IsVerified)
-                        {
-                            <span class="badge found">Verificada</span>
-                        }
-                    </div>
-                    <h3>@foundation.Name</h3>
-                    <p class="location">📍 @foundation.Location</p>
-                    <p>@foundation.Description</p>
-                    <ul class="simple-list">
-                        <li>@foundation.ContactPhone</li>
-                        <li>@foundation.Email</li>
-                    </ul>
-                </div>
-            </article>
-        }
-    </div>
+    @if (isLoading)
+    {
+        <div class="loading-state">Cargando...</div>
+    }
+    else if (isError)
+    {
+        <div class="error-state">Ocurrió un error al cargar las fundaciones. Intenta más tarde.</div>
+    }
+    else
+    {
+        <div class="filters-row">
+            <label>
+                Nombre
+                <input @bind="searchName" @bind:event="oninput" class="form-control" placeholder="Buscar por nombre" />
+            </label>
+
+            <label>
+                Ubicación
+                <input @bind="searchLocation" @bind:event="oninput" class="form-control" placeholder="Buscar por ubicación" />
+            </label>
+
+            <button class="secondary-btn" @onclick="ClearFilters">Limpiar</button>
+        </div>
+
+        <div class="cards-grid foundation-grid">
+            @if (Filtered.Any())
+            {
+                @foreach (var foundation in Filtered)
+                {
+                    <article class="foundation-card">
+                        <img src="@foundation.LogoUrl" alt="@foundation.Name" />
+                        <div class="pet-card-body">
+                            <div class="pet-meta">
+                                @if (foundation.IsVerified)
+                                {
+                                    <span class="badge found">Verificada</span>
+                                }
+                            </div>
+                            <h3>@foundation.Name</h3>
+                            <p class="location">📍 @foundation.Location</p>
+                            <p>@foundation.Description</p>
+                            <p><strong>@(Catalog.GetPetsByFoundation(foundation.Id).Count())</strong> mascotas registradas</p>
+                            <ul class="simple-list">
+                                <li>@foundation.ContactPhone</li>
+                                <li>@foundation.Email</li>
+                            </ul>
+                            <div class="pet-actions">
+                                <a class="primary-btn" href="/fundaciones/@foundation.Id">Ver detalle</a>
+                            </div>
+                        </div>
+                    </article>
+                }
+            }
+            else
+            {
+                <div class="empty-state">No se encontraron fundaciones que coincidan con los filtros.</div>
+            }
+        </div>
+    }
+
 </section>
+
+@code {
+    private string searchName = string.Empty;
+    private string searchLocation = string.Empty;
+
+    private List<Foundation> localFoundations = new();
+    private bool isLoading = true;
+    private bool isError = false;
+
+    private IEnumerable<Foundation> Filtered => localFoundations
+        .Where(f => string.IsNullOrEmpty(searchName) || f.Name.Contains(searchName, StringComparison.OrdinalIgnoreCase))
+        .Where(f => string.IsNullOrEmpty(searchLocation) || f.Location.Contains(searchLocation, StringComparison.OrdinalIgnoreCase))
+        .ToList();
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+        isError = false;
+        try
+        {
+            await Task.Yield();
+            localFoundations = Catalog.GetFoundations().ToList();
+        }
+        catch
+        {
+            isError = true;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void ClearFilters()
+    {
+        searchName = string.Empty;
+        searchLocation = string.Empty;
+    }
+}

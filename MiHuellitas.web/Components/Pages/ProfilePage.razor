@@ -1,5 +1,6 @@
 @page "/perfil"
 @inject MiHuellitas.shared.Services.MockCatalogService Catalog
+@implements IDisposable
 
 <PageTitle>Perfil</PageTitle>
 
@@ -24,17 +25,17 @@
         </aside>
 
         <div class="profile-content">
-            <div class="stats-grid">
+                    <div class="stats-grid">
                 <div class="stat-box">
-                    <strong>14</strong>
+                    <strong>@ReportsCount</strong>
                     <span>Reportes</span>
                 </div>
                 <div class="stat-box">
-                    <strong>6</strong>
+                    <strong>@PublicationsCount</strong>
                     <span>Publicaciones</span>
                 </div>
                 <div class="stat-box">
-                    <strong>3</strong>
+                    <strong>@FavoritesCount</strong>
                     <span>Favoritos</span>
                 </div>
             </div>
@@ -55,3 +56,25 @@
         </div>
     </div>
 </section>
+
+@code {
+    private int ReportsCount => Catalog.Reports?.Count ?? 0;
+    private int PublicationsCount => Catalog.Pets?.Count(p => p.ResponsibleName == Catalog.CurrentUser.Name) ?? 0;
+    private int FavoritesCount => 0; // No model for favorites yet; requires domain change to track favorites per user
+
+    protected override void OnInitialized()
+    {
+        Catalog.NotificationsChanged += OnNotificationsChanged;
+    }
+
+    private void OnNotificationsChanged()
+    {
+        // When reports/notifications change in the mock service, update the UI
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        Catalog.NotificationsChanged -= OnNotificationsChanged;
+    }
+}

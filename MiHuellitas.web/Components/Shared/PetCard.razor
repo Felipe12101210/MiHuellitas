@@ -6,19 +6,29 @@
 }
 else
 {
-    <article class="pet-card">
-        <img src="@Pet.ImageUrl" alt="@Pet.Name" />
+    <article class="pet-card" tabindex="0" role="article" aria-label="Mascota: @Pet.Name">
+        <figure>
+            <img src="@Pet.ImageUrl" alt="@Pet.Name" />
+        </figure>
         <div class="pet-card-body">
-            <div class="pet-meta">
+                    <div class="pet-meta">
+                <span class="badge @(Pet.ListingType == MiHuellitas.shared.Enums.ListingType.Lost ? "missing" : Pet.ListingType == MiHuellitas.shared.Enums.ListingType.Found ? "found" : "adoption")">@Pet.ListingType</span>
                 <span>@Pet.Species</span>
                 <span>@Pet.Breed</span>
             </div>
-            <h3>@Pet.Name</h3>
+            <h3>@(string.IsNullOrWhiteSpace(Pet.Name) ? "Sin nombre" : Pet.Name)</h3>
             <p class="location">📍 @Pet.Location</p>
-            <p>@(Pet.Description?.Length > 140 ? Pet.Description.Substring(0, 137) + "..." : Pet.Description)</p>
+            @if (!string.IsNullOrWhiteSpace(Pet.Description))
+            {
+                <p>@(Pet.Description.Length > 140 ? Pet.Description.Substring(0, 137) + "..." : Pet.Description)</p>
+            }
             <div class="card-footer-row">
                 <span>@(Pet.AgeMonths) meses</span>
                 <span>@Pet.Size</span>
+                @if (Pet.ListingType == MiHuellitas.shared.Enums.ListingType.Lost || Pet.ListingType == MiHuellitas.shared.Enums.ListingType.Found)
+                {
+                    <span>• Última vez visto: @Pet.LastSeenAt.ToString("yyyy-MM-dd")</span>
+                }
             </div>
             <div class="pet-actions">
                 @{

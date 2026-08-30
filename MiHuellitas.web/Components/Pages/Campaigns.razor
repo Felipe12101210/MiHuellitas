@@ -1,5 +1,6 @@
 @page "/campanas"
 @inject MiHuellitas.shared.Services.MockCatalogService Catalog
+@using MiHuellitas.shared.Models
 
 <PageTitle>Campañas</PageTitle>
 
@@ -11,24 +12,109 @@
         </div>
     </header>
 
-    <div class="cards-grid">
-        @foreach (var campaign in Catalog.Campaigns)
-        {
-            <article class="campaign-card">
-                <img src="@campaign.ImageUrl" alt="@campaign.Title" />
-                <div class="pet-card-body">
-                    <div class="pet-meta">
-                        <span class="badge found">@campaign.Status</span>
+    @if (isLoading)
+    {
+        <div class="loading-state">Cargando...</div>
+    }
+    else if (isError)
+    {
+        <div class="error-state">Ocurrió un error al cargar las campañas. Intenta más tarde.</div>
+    }
+    else
+    {
+        <div class="filters-row">
+            <label>
+                Título
+                <input @bind="searchTitle" @bind:event="oninput" class="form-control" placeholder="Buscar por título" />
+            </label>
+
+            <label>
+                Ubicación
+                <input @bind="searchLocation" @bind:event="oninput" class="form-control" placeholder="Buscar por ubicación" />
+            </label>
+
+            <button class="secondary-btn" @onclick="ClearFilters">Limpiar</button>
+        </div>
+
+        <div class="cards-grid">
+            @if (Filtered.Any())
+            {
+                @foreach (var campaign in Filtered.Take(pageSize))
+                {
+                    <article class="campaign-card">
+                        <img src="@campaign.ImageUrl" alt="@campaign.Title" />
+                        <div class="pet-card-body">
+                            <div class="pet-meta">
+                                <span class="badge found">@campaign.Status</span>
+                            </div>
+                            <h3>@campaign.Title</h3>
+                            <p class="location">📍 @campaign.Location</p>
+                            <p>@campaign.Description</p>
+                            <div class="card-footer-row">
+                                <span>@campaign.Organizer</span>
+                                <span>@campaign.EventDate.ToString("dd MMM yyyy")</span>
+                            </div>
+                            <div class="pet-actions">
+                                <a class="primary-btn" href="/campanas/@campaign.Id">Ver detalle</a>
+                            </div>
+                        </div>
+                    </article>
+                }
+
+                @if (Filtered.Count() > pageSize)
+                {
+                    <div class="load-more">
+                        <button class="primary-btn" @onclick="LoadMore">Cargar más</button>
                     </div>
-                    <h3>@campaign.Title</h3>
-                    <p class="location">📍 @campaign.Location</p>
-                    <p>@campaign.Description</p>
-                    <div class="card-footer-row">
-                        <span>@campaign.Organizer</span>
-                        <span>@campaign.EventDate.ToString("dd MMM yyyy")</span>
-                    </div>
-                </div>
-            </article>
-        }
-    </div>
+                }
+            }
+            else
+            {
+                <div class="empty-state">No se encontraron campañas que coincidan con los filtros.</div>
+            }
+        </div>
+    }
 </section>
+
+@code {
+    private string searchTitle = string.Empty;
+    private string searchLocation = string.Empty;
+
+    private List<Campaign> localCampaigns = new();
+    private bool isLoading = true;
+    private bool isError = false;
+
+    private IEnumerable<Campaign> Filtered => localCampaigns
+        .Where(c => string.IsNullOrEmpty(searchTitle) || c.Title.Contains(searchTitle, StringComparison.OrdinalIgnoreCase))
+        .Where(c => string.IsNullOrEmpty(searchLocation) || c.Location.Contains(searchLocation, StringComparison.OrdinalIgnoreCase))
+        .ToList();
+
+    private int pageSize = 6;
+
+    private void LoadMore() => pageSize += 6;
+
+    private void ClearFilters()
+    {
+        searchTitle = string.Empty;
+        searchLocation = string.Empty;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+        isError = false;
+        try
+        {
+            await Task.Yield();
+            localCampaigns = Catalog.GetCampaigns().ToList();
+        }
+        catch
+        {
+            isError = true;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

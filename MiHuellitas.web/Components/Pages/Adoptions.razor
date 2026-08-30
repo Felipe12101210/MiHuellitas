@@ -1,5 +1,6 @@
 @page "/adopciones"
 @inject MiHuellitas.shared.Services.MockCatalogService Catalog
+@implements IDisposable
 
 @using System.Linq
 @using MiHuellitas.shared.Models
@@ -38,6 +39,17 @@
         </label>
 
         <label>
+            Ubicación
+            <select @onchange="OnLocationChanged" class="form-select">
+                <option value="">Todas</option>
+                @foreach (var l in LocationOptions)
+                {
+                    <option value="@l">@l</option>
+                }
+            </select>
+        </label>
+
+        <label>
             Estado
             <select @onchange="OnStatusChanged" class="form-select">
                 <option value="">Todos</option>
@@ -48,73 +60,119 @@
             </select>
         </label>
 
+        <label>
+            Buscar
+            <input placeholder="Texto" @bind="searchText" @bind:event="oninput" class="form-control" />
+        </label>
+
         <button class="secondary-btn" @onclick="ClearFilters">Limpiar</button>
     </div>
 
-    <div class="cards-grid">
-        @if (Filtered.Any())
-        {
-            @foreach (var pet in Filtered.Take(pageSize))
+    @if (isLoading)
+    {
+        <div class="loading-state">Cargando...</div>
+    }
+    else if (isError)
+    {
+        <div class="error-state">Ocurrió un error al cargar las mascotas. Intenta más tarde.</div>
+    }
+    else
+    {
+        <div class="cards-grid">
+            @if (Filtered.Any())
             {
-                <PetCard Pet="pet" />
-            }
+                @foreach (var pet in Filtered.Take(pageSize))
+                {
+                    <PetCard Pet="pet" />
+                }
 
-            @if (Filtered.Count() > pageSize)
-            {
-                <div class="load-more">
-                    <button class="primary-btn" @onclick="LoadMore">Cargar más</button>
-                </div>
+                @if (Filtered.Count() > pageSize)
+                {
+                    <div class="load-more">
+                        <button class="primary-btn" @onclick="LoadMore">Cargar más</button>
+                    </div>
+                }
             }
-        }
-        else
-        {
-            <div class="empty-state">No se encontraron animales que coincidan con los filtros.</div>
-        }
-    </div>
+            else
+            {
+                <div class="empty-state">No se encontraron animales que coincidan con los filtros.</div>
+            }
+        </div>
+    }
 </section>
 
 @code {
     private string selectedSpecies = string.Empty;
     private string selectedBreed = string.Empty;
+    private string selectedLocation = string.Empty;
     private string selectedStatus = string.Empty;
+    private string searchText = string.Empty;
 
-    private IEnumerable<string> SpeciesOptions => Catalog.Adoptions.Select(p => p.Species).Distinct().OrderBy(x => x);
-    private IEnumerable<string> BreedOptions => Catalog.Adoptions.Select(p => p.Breed).Distinct().OrderBy(x => x);
-    private IEnumerable<string> StatusOptions => Catalog.Adoptions.Select(p => p.Status.ToString()).Distinct().OrderBy(x => x);
+    private List<Pet> localPets = new();
+    private bool isLoading = true;
+    private bool isError = false;
 
-    private IEnumerable<Pet> Filtered => Catalog.Adoptions
+    private IEnumerable<string> SpeciesOptions => localPets.Select(p => p.Species).Distinct().OrderBy(x => x);
+    private IEnumerable<string> BreedOptions => localPets.Select(p => p.Breed).Distinct().OrderBy(x => x);
+    private IEnumerable<string> LocationOptions => localPets.Select(p => p.Location).Distinct().OrderBy(x => x);
+    private IEnumerable<string> StatusOptions => localPets.Select(p => p.Status.ToString()).Distinct().OrderBy(x => x);
+
+    private IEnumerable<Pet> Filtered => localPets
         .Where(p => string.IsNullOrEmpty(selectedSpecies) || p.Species == selectedSpecies)
         .Where(p => string.IsNullOrEmpty(selectedBreed) || p.Breed == selectedBreed)
+        .Where(p => string.IsNullOrEmpty(selectedLocation) || p.Location == selectedLocation)
         .Where(p => string.IsNullOrEmpty(selectedStatus) || p.Status.ToString() == selectedStatus)
+        .Where(p => string.IsNullOrEmpty(searchText) || (p.Name + " " + p.Description + " " + p.Location).Contains(searchText, StringComparison.OrdinalIgnoreCase))
         .ToList();
 
     private int pageSize = 6;
 
-    private void LoadMore()
-    {
-        pageSize += 6;
-    }
+    private void LoadMore() => pageSize += 6;
 
-    private void OnSpeciesChanged(ChangeEventArgs e)
-    {
-        selectedSpecies = e?.Value?.ToString() ?? string.Empty;
-    }
-
-    private void OnBreedChanged(ChangeEventArgs e)
-    {
-        selectedBreed = e?.Value?.ToString() ?? string.Empty;
-    }
-
-    private void OnStatusChanged(ChangeEventArgs e)
-    {
-        selectedStatus = e?.Value?.ToString() ?? string.Empty;
-    }
+    private void OnSpeciesChanged(ChangeEventArgs e) => selectedSpecies = e?.Value?.ToString() ?? string.Empty;
+    private void OnBreedChanged(ChangeEventArgs e) => selectedBreed = e?.Value?.ToString() ?? string.Empty;
+    private void OnLocationChanged(ChangeEventArgs e) => selectedLocation = e?.Value?.ToString() ?? string.Empty;
+    private void OnStatusChanged(ChangeEventArgs e) => selectedStatus = e?.Value?.ToString() ?? string.Empty;
 
     private void ClearFilters()
     {
         selectedSpecies = string.Empty;
         selectedBreed = string.Empty;
+        selectedLocation = string.Empty;
         selectedStatus = string.Empty;
+        searchText = string.Empty;
         pageSize = 6;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+        isError = false;
+        try
+        {
+            await Task.Yield();
+            localPets = Catalog.Adoptions.ToList();
+            Catalog.PetsChanged += OnPetsChanged;
+        }
+        catch
+        {
+            isError = true;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void OnPetsChanged()
+    {
+        // reload local cache and re-render
+        localPets = Catalog.Adoptions.ToList();
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        Catalog.PetsChanged -= OnPetsChanged;
     }
 }

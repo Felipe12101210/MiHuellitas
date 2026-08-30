@@ -2,6 +2,7 @@
 @inject MiHuellitas.shared.Services.MockCatalogService Catalog
 @using System.Linq
 @using MiHuellitas.shared.Models
+@implements IDisposable
 
 <PageTitle>Animales encontrados</PageTitle>
 
@@ -13,7 +14,17 @@
         </div>
     </header>
 
-    <div class="filters-row">
+    @if (isLoading)
+    {
+        <div class="loading-state">Cargando...</div>
+    }
+    else if (isError)
+    {
+        <div class="error-state">Ocurrió un error al cargar los reportes. Intenta más tarde.</div>
+    }
+    else
+    {
+        <div class="filters-row">
         <label>
             Especie
             <select @onchange="OnSpeciesChanged" class="form-select">
@@ -65,6 +76,7 @@
 
         <button class="secondary-btn" @onclick="ClearFilters">Limpiar</button>
     </div>
+    }
 
     <div class="cards-grid">
         @if (Filtered.Any())
@@ -139,6 +151,7 @@
         {
             await Task.Yield();
             localPets = Catalog.FoundPets.ToList();
+            Catalog.PetsChanged += OnPetsChanged;
         }
         catch
         {
@@ -148,5 +161,16 @@
         {
             isLoading = false;
         }
+    }
+
+    private void OnPetsChanged()
+    {
+        localPets = Catalog.FoundPets.ToList();
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        Catalog.PetsChanged -= OnPetsChanged;
     }
 }

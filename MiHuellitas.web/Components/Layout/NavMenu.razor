@@ -1,7 +1,11 @@
 <nav class="top-nav">
     <a class="brand" href="/">Mi Huellitas</a>
 
-    <div class="nav-links">
+    <button class="nav-toggle" @onclick="ToggleMenu" aria-expanded="@isOpen" aria-label="Abrir menú">
+        ☰
+    </button>
+
+    <div class="nav-links @(isOpen ? "open" : "")">
         <NavLink href="/" Match="NavLinkMatch.All">Inicio</NavLink>
         <NavLink href="/adopciones">Adopciones</NavLink>
         <NavLink href="/perdidos">Perdidos</NavLink>
@@ -14,3 +18,8 @@
 
     <a class="profile-pill" href="/perfil">Perfil</a>
 </nav>
+
+@code {
+    private bool isOpen = false;
+    private void ToggleMenu() => isOpen = !isOpen;
+}

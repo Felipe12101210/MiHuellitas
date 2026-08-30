@@ -1,5 +1,6 @@
 @page "/notificaciones"
 @inject MiHuellitas.shared.Services.MockCatalogService Catalog
+@implements IDisposable
 
 <PageTitle>Notificaciones</PageTitle>
 
@@ -12,16 +13,58 @@
     </header>
 
     <div class="notification-list">
-        @foreach (var notification in Catalog.Notifications)
+        @if (!Catalog.Notifications.Any())
         {
-            <article class="notification-item">
-                <div class="notification-badge">@notification.Type</div>
-                <div>
-                    <h3>@notification.Title</h3>
-                    <p>@notification.Message</p>
-                    <small>@notification.CreatedAt.ToString("dd MMM yyyy, HH:mm")</small>
-                </div>
-            </article>
+            <div class="empty-state">No hay notificaciones.</div>
+        }
+        else
+        {
+            @foreach (var notification in Catalog.Notifications)
+            {
+                <article class="notification-item @(notification.IsRead ? "read" : "unread")">
+                    <div class="notification-badge">@notification.Type</div>
+                    <div>
+                        <h3>@notification.Title</h3>
+                        <p>@notification.Message</p>
+                        <small>@notification.CreatedAt.ToString("dd MMM yyyy, HH:mm")</small>
+                    </div>
+                    <div class="notification-actions">
+                        @if (!notification.IsRead)
+                        {
+                            <button class="secondary-btn" @onclick="() => MarkRead(notification.Id)">Marcar leída</button>
+                        }
+                        <button class="danger-btn" @onclick="() => DeleteNotification(notification.Id)">Eliminar</button>
+                    </div>
+                </article>
+            }
         }
     </div>
 </section>
+
+@code {
+    protected override void OnInitialized()
+    {
+        Catalog.NotificationsChanged += OnNotificationsChanged;
+    }
+
+    private void OnNotificationsChanged()
+    {
+        // ensure UI updates on the Blazor render thread
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void MarkRead(int id)
+    {
+        Catalog.MarkNotificationRead(id);
+    }
+
+    private void DeleteNotification(int id)
+    {
+        Catalog.RemoveNotification(id);
+    }
+
+    public void Dispose()
+    {
+        Catalog.NotificationsChanged -= OnNotificationsChanged;
+    }
+}

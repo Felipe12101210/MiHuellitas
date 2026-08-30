@@ -1,5 +1,6 @@
 @page "/mapa"
 @inject MiHuellitas.shared.Services.MockCatalogService Catalog
+@inject NavigationManager Nav
 
 <PageTitle>Mapa</PageTitle>
 
@@ -12,22 +13,64 @@
     </header>
 
     <div class="map-panel">
-        <div class="map-surface">
+        <div class="map-surface" style="position:relative; height:420px; background:#f3f6f8; border-radius:8px;">
             @foreach (var pet in Catalog.Pets)
             {
-                <div class="map-pin" style="left:@((pet.Id * 14) % 78 + 8)% ; top:@((pet.Id * 21) % 60 + 10)% ;">
+                var left = ((pet.Id * 23) % 70) + 5;
+                var top = ((pet.Id * 37) % 60) + 5;
+                <button class="map-pin" style=$"position:absolute; left:@left% ; top:@top% ;" @onclick="() => SelectPet(pet)">
                     <span>@pet.Name</span>
+                </button>
+            }
+
+            @if (selectedPet is not null)
+            {
+                <div class="map-info" style="position:absolute; right:12px; bottom:12px; background:white; padding:12px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.08); width:260px;">
+                    <h4>@selectedPet.Name</h4>
+                    <p>@selectedPet.Species - @selectedPet.Breed</p>
+                    <p class="location">📍 @selectedPet.Location</p>
+                    <div style="display:flex; gap:8px; margin-top:8px;">
+                        <button class="primary-btn" @onclick="() => NavigateToPet(selectedPet)">Ver detalle</button>
+                        <button class="secondary-btn" @onclick="() => selectedPet = null">Cerrar</button>
+                    </div>
                 </div>
             }
         </div>
+
         <div class="map-list">
             @foreach (var pet in Catalog.Pets)
             {
-                <div class="mini-item">
-                    <strong>@pet.Name</strong>
-                    <span>@pet.Location</span>
+                <div class="mini-item" style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid var(--line);">
+                    <div>
+                        <strong>@pet.Name</strong>
+                        <div class="small">@pet.Location</div>
+                    </div>
+                    <div>
+                        <button class="link-btn" @onclick="() => SelectPet(pet)">Mostrar</button>
+                    </div>
                 </div>
             }
         </div>
     </div>
 </section>
+
+@code {
+    private MiHuellitas.shared.Models.Pet? selectedPet;
+
+    private void SelectPet(MiHuellitas.shared.Models.Pet pet)
+    {
+        selectedPet = pet;
+    }
+
+    private void NavigateToPet(MiHuellitas.shared.Models.Pet pet)
+    {
+        var route = pet.ListingType switch
+        {
+            MiHuellitas.shared.Enums.ListingType.Adoption => $"/adopciones/{pet.Id}",
+            MiHuellitas.shared.Enums.ListingType.Lost => $"/perdidos/{pet.Id}",
+            MiHuellitas.shared.Enums.ListingType.Found => $"/encontrados/{pet.Id}",
+            _ => $"/adopciones/{pet.Id}"
+        };
+        Nav.NavigateTo(route);
+    }
+}
