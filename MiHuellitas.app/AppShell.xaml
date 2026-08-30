@@ -4,11 +4,47 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:MiHuellitas.app"
+    xmlns:pages="clr-namespace:MiHuellitas.app.Pages"
     Title="MiHuellitas.app">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <FlyoutItem Title="Inicio" FlyoutDisplayOptions="AsMultipleItems">
+        <ShellContent Title="Home" ContentTemplate="{DataTemplate pages:HomePage}" Route="/" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Adopciones">
+        <ShellContent Title="Adopciones" ContentTemplate="{DataTemplate pages:AdoptionsPage}" Route="/adoptions" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Perdidos">
+        <ShellContent Title="Perdidos" ContentTemplate="{DataTemplate pages:LostPetsPage}" Route="/lost" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Encontrados">
+        <ShellContent Title="Encontrados" ContentTemplate="{DataTemplate pages:FoundPetsPage}" Route="/found" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Fundaciones">
+        <ShellContent Title="Fundaciones" ContentTemplate="{DataTemplate pages:FoundationsPage}" Route="/foundations" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Campañas">
+        <ShellContent Title="Campañas" ContentTemplate="{DataTemplate pages:CampaignsPage}" Route="/campaigns" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Mapa">
+        <ShellContent Title="Mapa" ContentTemplate="{DataTemplate pages:MapPage}" Route="/map" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Notificaciones">
+        <ShellContent Title="Notificaciones" ContentTemplate="{DataTemplate pages:NotificationsPage}" Route="/notifications" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Perfil">
+        <ShellContent Title="Perfil" ContentTemplate="{DataTemplate pages:ProfilePage}" Route="/profile" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Publicar">
+        <ShellContent Title="Publicar" ContentTemplate="{DataTemplate pages:PublishPage}" Route="/publish" />
+    </FlyoutItem>
 
 </Shell>
