@@ -27,12 +27,12 @@ public class FoundationsPage : ContentPage
                 var list = new VerticalStackLayout { Spacing = 8 };
                 foreach (var f in catalog.Foundations)
                 {
-                    var frame = new Frame { Padding = 8, BorderColor = Colors.LightGray, CornerRadius = 8 };
+                    var border = new Border { Padding = 8, Stroke = Colors.LightGray, StrokeThickness = 1, CornerRadius = new CornerRadius(8) };
                     var v = new VerticalStackLayout();
                     v.Children.Add(new Label { Text = f.Name, FontAttributes = FontAttributes.Bold });
                     v.Children.Add(new Label { Text = $"{f.Location}", FontSize = 12 });
-                    frame.Content = v;
-                    list.Children.Add(frame);
+                    border.Content = v;
+                    list.Children.Add(border);
                 }
                 layout.Children.Add(new ScrollView { Content = list });
             }

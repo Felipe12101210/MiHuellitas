@@ -21,7 +21,7 @@ public class MapPage : ContentPage
             foreach (var p in catalog.Pets)
             {
                 var btn = new Button { Text = p.Name };
-                btn.Clicked += async (s, e) => await Shell.Current.DisplayAlert("Mascota seleccionada", $"{p.Name} - {p.Location}", "OK");
+                btn.Clicked += async (s, e) => await Shell.Current.DisplayAlertAsync("Mascota seleccionada", $"{p.Name} - {p.Location}", "OK");
                 list.Children.Add(btn);
             }
             layout.Children.Add(new ScrollView { Content = list, HeightRequest = 300 });

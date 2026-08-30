@@ -42,13 +42,13 @@ public class PublishPage : ContentPage
     {
         if (_catalog is null)
         {
-            await DisplayAlert("Error", "Servicio no disponible", "OK");
+            await DisplayAlertAsync("Error", "Servicio no disponible", "OK");
             return;
         }
 
         if (string.IsNullOrWhiteSpace(_nameEntry.Text) || string.IsNullOrWhiteSpace(_speciesEntry.Text) || _typePicker.SelectedIndex < 0)
         {
-            await DisplayAlert("Validación", "Nombre, especie y tipo son requeridos.", "OK");
+            await DisplayAlertAsync("Validación", "Nombre, especie y tipo son requeridos.", "OK");
             return;
         }
 
@@ -71,7 +71,7 @@ public class PublishPage : ContentPage
 
         _catalog.AddPet(pet);
 
-        await DisplayAlert("Listo", "Mascota publicada (mock)", "OK");
+        await DisplayAlertAsync("Listo", "Mascota publicada (mock)", "OK");
         // Navigate back to the corresponding listing
         if (pet.ListingType == ListingType.Adoption)
             await Shell.Current.GoToAsync("/adoptions");

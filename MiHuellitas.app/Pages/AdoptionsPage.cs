@@ -28,12 +28,15 @@ public class AdoptionsPage : ContentPage
                 var list = new VerticalStackLayout { Spacing = 8 };
                 foreach (var p in catalog.Adoptions)
                 {
-                    var frame = new Frame { Padding = 8, BorderColor = Colors.LightGray, CornerRadius = 8 };
+                    var border = new Border { Padding = 8, Stroke = Colors.LightGray, StrokeThickness = 1, CornerRadius = new CornerRadius(8) };
                     var v = new VerticalStackLayout();
                     v.Children.Add(new Label { Text = p.Name, FontAttributes = FontAttributes.Bold });
                     v.Children.Add(new Label { Text = $"{p.Species} • {p.Breed} • {p.Location}", FontSize = 12 });
-                    frame.Content = v;
-                    list.Children.Add(frame);
+                    var btn = new Button { Text = "Ver detalle" };
+                    btn.Clicked += async (s, e) => await Shell.Current.GoToAsync($"petdetail?petId={p.Id}");
+                    v.Children.Add(btn);
+                    border.Content = v;
+                    list.Children.Add(border);
                 }
                 layout.Children.Add(new ScrollView { Content = list });
             }
