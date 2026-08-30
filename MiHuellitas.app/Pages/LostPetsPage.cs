@@ -44,7 +44,7 @@ public class LostPetsPage : ContentPage
 
         foreach (var p in _catalog.LostPets)
         {
-            var border = new Border { Padding = 8, Stroke = Colors.LightGray, StrokeThickness = 1, CornerRadius = new CornerRadius(8) };
+            var border = new Border { Padding = 8, Stroke = Colors.LightGray, StrokeThickness = 1 };
             var v = new VerticalStackLayout();
             v.Children.Add(new Label { Text = p.Name, FontAttributes = FontAttributes.Bold });
             v.Children.Add(new Label { Text = $"{p.LastSeenAt:g} • {p.Location}", FontSize = 12 });

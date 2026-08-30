@@ -65,7 +65,7 @@ public class PetDetailPage : ContentPage
             string res = await DisplayPromptAsync("Reportar", "Mensaje de reporte:");
             if (!string.IsNullOrWhiteSpace(res))
             {
-                var report = new Report { PetId = pet.Id, ReporterName = _catalog.CurrentUser.Name, Phone = _catalog.CurrentUser.Phone, Type = "Reporte", Message = res };
+                var report = new Report { PetId = pet.Id, ReporterName = _catalog.CurrentUser.Name, ReporterPhone = _catalog.CurrentUser.Phone, Type = "Reporte", Message = res };
                 _catalog.SubmitReport(report);
                 await DisplayAlertAsync("Gracias", "Reporte enviado (mock)", "OK");
             }

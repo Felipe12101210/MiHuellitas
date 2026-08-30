@@ -46,7 +46,7 @@ public class AdoptionsPage : ContentPage
 
         foreach (var p in _catalog.Adoptions)
         {
-            var border = new Border { Padding = 8, Stroke = Colors.LightGray, StrokeThickness = 1, CornerRadius = new CornerRadius(8) };
+            var border = new Border { Padding = 8, Stroke = Colors.LightGray, StrokeThickness = 1 };
             var v = new VerticalStackLayout();
             v.Children.Add(new Label { Text = p.Name, FontAttributes = FontAttributes.Bold });
             v.Children.Add(new Label { Text = $"{p.Species} • {p.Breed} • {p.Location}", FontSize = 12 });

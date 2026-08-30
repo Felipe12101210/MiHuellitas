@@ -27,7 +27,7 @@ public class CampaignsPage : ContentPage
                 var list = new VerticalStackLayout { Spacing = 8 };
                 foreach (var c in catalog.Campaigns)
                 {
-                    var border = new Border { Padding = 8, Stroke = Colors.LightGray, StrokeThickness = 1, CornerRadius = new CornerRadius(8) };
+                    var border = new Border { Padding = 8, Stroke = Colors.LightGray, StrokeThickness = 1 };
                     var v = new VerticalStackLayout();
                     v.Children.Add(new Label { Text = c.Title, FontAttributes = FontAttributes.Bold });
                     v.Children.Add(new Label { Text = $"{c.Location} • {c.EventDate:d}", FontSize = 12 });

@@ -1,5 +1,7 @@
 ﻿namespace MiHuellitas.app;
 
+using MiHuellitas.app.Pages;
+
 public partial class AppShell : Shell
 {
 	public AppShell()

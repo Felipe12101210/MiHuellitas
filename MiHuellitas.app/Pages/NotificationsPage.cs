@@ -48,7 +48,7 @@ public class NotificationsPage : ContentPage
 
         foreach (var n in notifications)
         {
-            var border = new Border { Padding = 8, Stroke = Colors.LightGray, StrokeThickness = 1, CornerRadius = new CornerRadius(8) };
+            var border = new Border { Padding = 8, Stroke = Colors.LightGray, StrokeThickness = 1 };
             var v = new VerticalStackLayout();
             v.Children.Add(new Label { Text = n.Title, FontAttributes = FontAttributes.Bold });
             v.Children.Add(new Label { Text = n.Message, FontSize = 12 });
