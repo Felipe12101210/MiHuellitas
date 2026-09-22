@@ -27,6 +27,19 @@ public class MapPage : ContentPage
     private readonly Dictionary<int, Label> _pinNames = new();
     private readonly Dictionary<int, Border> _rows = new();
 
+    // Street grid (keep in sync with MapView.razor)
+    private static readonly double[] HStreets = { 0.16, 0.28, 0.44, 0.56, 0.68, 0.84 };
+    private static readonly double[] VStreets = { 0.24, 0.32, 0.48, 0.58, 0.72, 0.88 };
+    private static readonly string[] HNames = { "Calle 100", "Calle 72", "Calle 63", "Calle 45", "Calle 26", "Calle 13" };
+    private static readonly string[] VNames = { "Av. Caracas", "NQS", "Cra 7", "Av. Boyacá", "Cra 13", "Av. 68" };
+
+    // Landmark rectangles [top, left, height, width] (keep in sync with MapView.razor)
+    private static readonly double[] ParkSB        = { 0.05, 0.08, 0.18, 0.16 };
+    private static readonly double[] Airport        = { 0.32, 0.08, 0.14, 0.14 };
+    private static readonly double[] Cerros         = { 0.00, 0.92, 1.00, 0.08 };
+    private static readonly double[] LaCandelaria   = { 0.52, 0.36, 0.10, 0.12 };
+    private static readonly double[] ParkTunal      = { 0.78, 0.30, 0.09, 0.12 };
+
     public MapPage()
     {
         Title = "Mapa";
@@ -84,71 +97,139 @@ public class MapPage : ContentPage
     {
         if (_mapSurface is null) return;
 
-        // Main park (top-right) and river (bottom-left) - preserved
-        var park = new BoxView { Color = MapColor("#CDE5CF"), CornerRadius = 10 };
-        AbsoluteLayout.SetLayoutBounds(park, new Rect(0.64, 0.14, 0.28, 0.20));
-        AbsoluteLayout.SetLayoutFlags(park, AbsoluteLayoutFlags.All);
-        _mapSurface.Children.Add(park);
+        // ── Río Bogotá (west edge) ──
+        AddZone(0.00, 0.04, 1.00, 0.035, "#DDEEFFB0", 6);
+        PlaceLabel("Río Bogotá", 0.48, 0.03, 7, "#7FB3D3", true);
 
-        var river = new BoxView { Color = MapColor("#EAF4FB"), CornerRadius = 10 };
-        AbsoluteLayout.SetLayoutBounds(river, new Rect(0.12, 0.56, 0.20, 0.32));
-        AbsoluteLayout.SetLayoutFlags(river, AbsoluteLayoutFlags.All);
-        _mapSurface.Children.Add(river);
+        // ── Parque Simón Bolívar (north-west) ──
+        AddZone(ParkSB[0], ParkSB[1], ParkSB[2], ParkSB[3], "#CDE5CF", 10);
+        PlaceLabel("Parque Simón Bolívar", 0.10, 0.11, 8, "#5A7A60", false, FontAttributes.Bold);
 
-        // Minor park (top-left) and central plaza
-        var minorPark = new BoxView { Color = MapColor("#D8EED9"), CornerRadius = 6 };
-        AbsoluteLayout.SetLayoutBounds(minorPark, new Rect(0.05, 0.05, 0.12, 0.09));
-        AbsoluteLayout.SetLayoutFlags(minorPark, AbsoluteLayoutFlags.All);
-        _mapSurface.Children.Add(minorPark);
+        // ── Aeropuerto El Dorado (west center) ──
+        AddZone(Airport[0], Airport[1], Airport[2], Airport[3], "#E2ECF1", 10);
+        // Runway
+        var runway = new BoxView { Color = Colors.White.WithAlpha(0.65f), CornerRadius = 2 };
+        AbsoluteLayout.SetLayoutBounds(runway, new Rect(0.10, 0.38, 0.10, 0.03));
+        AbsoluteLayout.SetLayoutFlags(runway, AbsoluteLayoutFlags.All);
+        _mapSurface.Children.Add(runway);
+        PlaceLabel("Aeropuerto El Dorado", 0.34, 0.10, 7, "#6A8A9A", false, FontAttributes.Bold);
 
-        var plaza = new BoxView { Color = MapColor("#FDF1E7"), CornerRadius = 8 };
-        AbsoluteLayout.SetLayoutBounds(plaza, new Rect(0.46, 0.44, 0.13, 0.11));
-        AbsoluteLayout.SetLayoutFlags(plaza, AbsoluteLayoutFlags.All);
-        _mapSurface.Children.Add(plaza);
-        var plazaLabel = new Label { Text = "Plaza", FontSize = 8, TextColor = MapColor("#B98A63"), FontAttributes = FontAttributes.Italic };
-        AbsoluteLayout.SetLayoutBounds(plazaLabel, new Rect(0.50, 0.44, AbsoluteLayout.AutoSize, AbsoluteLayout.AutoSize));
-        AbsoluteLayout.SetLayoutFlags(plazaLabel, AbsoluteLayoutFlags.XProportional);
-        _mapSurface.Children.Add(plazaLabel);
+        // ── Parque El Tunal (south center) ──
+        AddZone(ParkTunal[0], ParkTunal[1], ParkTunal[2], ParkTunal[3], "#D8EED9", 8);
+        PlaceLabel("Parque El Tunal", 0.81, 0.32, 8, "#5A7A60", false, FontAttributes.Italic);
 
-        // City blocks between streets (cartilla de ciudad)
+        // ── Plaza de Bolívar / La Candelaria (center-south) ──
+        AddZone(LaCandelaria[0], LaCandelaria[1], LaCandelaria[2], LaCandelaria[3], "#FDF1E7", 8);
+        PlaceLabel("La Candelaria", 0.54, 0.37, 8, "#B98A63", false, FontAttributes.Bold);
+        PlaceLabel("Plaza de Bolívar", 0.57, 0.37, 7, "#B98A63", false, FontAttributes.Italic);
+
+        // ── Cerros Orientales (east edge) ──
+        AddZone(Cerros[0], Cerros[1], Cerros[2], Cerros[3], "#CDE5CF", 10);
+        // Monserrate peak
+        PlaceLabel("⛰️", 0.14, 0.93, 10, "#5A7A60", false);
+        PlaceLabel("Monserrate", 0.135, 0.93, 7, "#5A7A60", false, FontAttributes.Italic);
+        // Guadalupe peak
+        PlaceLabel("⛰️", 0.36, 0.93, 10, "#5A7A60", false);
+        PlaceLabel("Guadalupe", 0.355, 0.93, 7, "#5A7A60", false, FontAttributes.Italic);
+
+        // ── City blocks ──
         PlaceCityBlocks();
 
-        // Horizontal streets (white bands) with small names
-        string[] hNames = { "Calle 63", "Calle 45", "Calle 26", "Calle 13" };
-        double[] hStreets = { 0.20, 0.42, 0.64, 0.86 };
-        for (int i = 0; i < hStreets.Length; i++)
+        // ── Horizontal streets ──
+        for (int i = 0; i < HStreets.Length; i++)
         {
             var road = new BoxView { Color = Colors.White };
-            AbsoluteLayout.SetLayoutBounds(road, new Rect(0, hStreets[i], 1, 0.018));
+            AbsoluteLayout.SetLayoutBounds(road, new Rect(0, HStreets[i], 0.92, 0.018));
             AbsoluteLayout.SetLayoutFlags(road, AbsoluteLayoutFlags.All);
             _mapSurface.Children.Add(road);
 
-            var label = new Label { Text = hNames[i], FontSize = 9, TextColor = MapColor("#9AA6AD"), FontAttributes = FontAttributes.Italic };
-            AbsoluteLayout.SetLayoutBounds(label, new Rect(10, hStreets[i], AbsoluteLayout.AutoSize, AbsoluteLayout.AutoSize));
+            var label = new Label { Text = HNames[i], FontSize = 9, TextColor = MapColor("#9AA6AD"), FontAttributes = FontAttributes.Italic };
+            AbsoluteLayout.SetLayoutBounds(label, new Rect(10, HStreets[i], AbsoluteLayout.AutoSize, AbsoluteLayout.AutoSize));
             AbsoluteLayout.SetLayoutFlags(label, AbsoluteLayoutFlags.YProportional);
             _mapSurface.Children.Add(label);
         }
 
-        // Vertical avenues (white bands) with small names
-        string[] vNames = { "Av. Caracas", "Cra 7", "Cra 13", "Av. 68" };
-        double[] vStreets = { 0.22, 0.46, 0.70, 0.90 };
-        for (int i = 0; i < vStreets.Length; i++)
+        // ── Vertical avenues ──
+        for (int i = 0; i < VStreets.Length; i++)
         {
             var road = new BoxView { Color = Colors.White };
-            AbsoluteLayout.SetLayoutBounds(road, new Rect(vStreets[i], 0, 0.016, 1));
+            AbsoluteLayout.SetLayoutBounds(road, new Rect(VStreets[i], 0, 0.016, 1));
             AbsoluteLayout.SetLayoutFlags(road, AbsoluteLayoutFlags.All);
             _mapSurface.Children.Add(road);
 
-            var label = new Label { Text = vNames[i], FontSize = 9, TextColor = MapColor("#9AA6AD"), FontAttributes = FontAttributes.Italic };
-            AbsoluteLayout.SetLayoutBounds(label, new Rect(vStreets[i], 8, AbsoluteLayout.AutoSize, AbsoluteLayout.AutoSize));
+            var label = new Label { Text = VNames[i], FontSize = 9, TextColor = MapColor("#9AA6AD"), FontAttributes = FontAttributes.Italic };
+            AbsoluteLayout.SetLayoutBounds(label, new Rect(VStreets[i], 8, AbsoluteLayout.AutoSize, AbsoluteLayout.AutoSize));
             AbsoluteLayout.SetLayoutFlags(label, AbsoluteLayoutFlags.XProportional);
             _mapSurface.Children.Add(label);
         }
 
-        // Diagonal streets (rotated white bands) crossing the surface
+        // ── Diagonal streets ──
         AddDiagonal(30, 0.30, "Diag. 50");
         AddDiagonal(-30, 0.62, "Av. Jiménez");
     }
+
+    private void PlaceCityBlocks()
+    {
+        if (_mapSurface is null) return;
+
+        double[] hBorders = { 0.00, 0.16, 0.28, 0.44, 0.56, 0.68, 0.84, 0.92 };
+        double[] vBorders = { 0.00, 0.24, 0.32, 0.48, 0.58, 0.72, 0.88, 0.92 };
+
+        for (int r = 0; r < hBorders.Length - 1; r++)
+        {
+            for (int c = 0; c < vBorders.Length - 1; c++)
+            {
+                double bTop = hBorders[r], bBot = hBorders[r + 1];
+                double bLeft = vBorders[c], bRight = vBorders[c + 1];
+                if (Overlap(bTop, bBot, bLeft, bRight, ParkSB)) continue;
+                if (Overlap(bTop, bBot, bLeft, bRight, Airport)) continue;
+                if (Overlap(bTop, bBot, bLeft, bRight, Cerros)) continue;
+                if (Overlap(bTop, bBot, bLeft, bRight, LaCandelaria)) continue;
+                if (Overlap(bTop, bBot, bLeft, bRight, ParkTunal)) continue;
+                double inset = 0.01;
+                double w = (bRight - bLeft) - inset * 2;
+                double h = (bBot - bTop) - inset * 2;
+                if (w > 0.01 && h > 0.01)
+                    AddBlock(bLeft + inset, bTop + inset, w, h);
+            }
+        }
+    }
+
+    private void AddBlock(double left, double top, double w, double h)
+    {
+        var block = new BoxView { Color = MapColor("#F7F8FA"), CornerRadius = 2 };
+        AbsoluteLayout.SetLayoutBounds(block, new Rect(left, top, w, h));
+        AbsoluteLayout.SetLayoutFlags(block, AbsoluteLayoutFlags.All);
+        _mapSurface!.Children.Add(block);
+    }
+
+    private void AddZone(double top, double left, double height, double width, string hex, double radius)
+    {
+        if (_mapSurface is null) return;
+        var box = new BoxView { Color = MapColor(hex), CornerRadius = (float)radius };
+        AbsoluteLayout.SetLayoutBounds(box, new Rect(left, top, width, height));
+        AbsoluteLayout.SetLayoutFlags(box, AbsoluteLayoutFlags.All);
+        _mapSurface.Children.Add(box);
+    }
+
+    private void PlaceLabel(string text, double top, double left, double fontSize, string color, bool isVertical, FontAttributes attrs = FontAttributes.None)
+    {
+        if (_mapSurface is null) return;
+        var label = new Label
+        {
+            Text = text,
+            FontSize = fontSize,
+            TextColor = MapColor(color),
+            FontAttributes = attrs,
+            Rotation = isVertical ? -90 : 0
+        };
+        AbsoluteLayout.SetLayoutBounds(label, new Rect(left, top, AbsoluteLayout.AutoSize, AbsoluteLayout.AutoSize));
+        AbsoluteLayout.SetLayoutFlags(label, AbsoluteLayoutFlags.All);
+        _mapSurface.Children.Add(label);
+    }
+
+    private static bool Overlap(double t, double b, double l, double r, double[] zone) =>
+        t < zone[0] + zone[2] && b > zone[0] && l < zone[1] + zone[3] && r > zone[1];
 
     private void AddDiagonal(double rotation, double yCenter, string name)
     {
@@ -169,34 +250,6 @@ public class MapPage : ContentPage
         AbsoluteLayout.SetLayoutBounds(label, new Rect(0.03, yCenter, AbsoluteLayout.AutoSize, AbsoluteLayout.AutoSize));
         AbsoluteLayout.SetLayoutFlags(label, AbsoluteLayoutFlags.All);
         _mapSurface.Children.Add(label);
-    }
-
-    private void PlaceCityBlocks()
-    {
-        if (_mapSurface is null) return;
-        double[][] rows = { new[] { 0.22, 0.42 }, new[] { 0.44, 0.64 }, new[] { 0.66, 0.86 } };
-        double[][] cols = { new[] { 0.238, 0.46 }, new[] { 0.478, 0.70 }, new[] { 0.718, 0.90 } };
-        foreach (var row in rows)
-        {
-            double rTop = row[0], rBot = row[1];
-            foreach (var col in cols)
-            {
-                double cLeft = col[0], cRight = col[1];
-                double top = rTop + (rBot - rTop) * 0.25;
-                double h = (rBot - rTop) * 0.5;
-                double w = (cRight - cLeft) * 0.42;
-                AddBlock(cLeft + (cRight - cLeft) * 0.06, top, w, h);
-                AddBlock(cLeft + (cRight - cLeft) * 0.52, top, w, h);
-            }
-        }
-    }
-
-    private void AddBlock(double left, double top, double w, double h)
-    {
-        var block = new BoxView { Color = MapColor("#F7F8FA"), CornerRadius = 2 };
-        AbsoluteLayout.SetLayoutBounds(block, new Rect(left, top, w, h));
-        AbsoluteLayout.SetLayoutFlags(block, AbsoluteLayoutFlags.All);
-        _mapSurface!.Children.Add(block);
     }
 
     private View BuildLegend()
@@ -233,7 +286,6 @@ public class MapPage : ContentPage
     {
         if (_mapSurface is null || _catalog is null) return;
 
-        // Remove everything after the backdrop (pins + info panel)
         for (int i = _mapSurface.Children.Count - 1; i >= _backdropCount; i--)
             _mapSurface.Children.RemoveAt(i);
         _pinDots.Clear();
@@ -414,7 +466,7 @@ public class MapPage : ContentPage
         }
 
         _infoContent.Children.Add(new Label { Text = _selectedPet.Name, Style = Res("CardTitle") });
-        _infoContent.Children.Add(new Label { Text = $"{_selectedPet.Species} - {_selectedPet.Breed}", Style = Res("MutedText") });
+        _infoContent.Children.Add(new Label { Text = $"{_selectedPet.Species} · {_selectedPet.Breed}", Style = Res("MutedText") });
         _infoContent.Children.Add(new Label { Text = $"{_selectedPet.Location}", Style = Res("MutedText") });
 
         var detailBtn = new Button { Text = "Ver detalle" };
@@ -451,8 +503,6 @@ public class MapPage : ContentPage
 
     private string SpeciesEmoji(Pet p) => IsCat(p) ? "🐱" : "🐶";
 
-    // Project (lat, lon) -> percentage of the surface, using the SAME Bogotá box
-    // as the Web map so pins land in equivalent positions.
     private static double LatToTop(double lat) =>
         (MockData.LAT_MAX - lat) / (MockData.LAT_MAX - MockData.LAT_MIN) * 100;
     private static double LonToLeft(double lon) =>

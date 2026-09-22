@@ -1322,3 +1322,49 @@ a.secondary-btn {
         grid-template-columns: 1fr;
     }
 }
+
+/* ---------- Announce banner (coming-soon promo) ---------- */
+.announce-banner {
+    background: linear-gradient(135deg, rgba(244, 213, 122, 0.15), rgba(125, 199, 164, 0.12));
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 32px 28px;
+    text-align: center;
+}
+
+.announce-banner .announce-text {
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+    line-height: 1.65;
+    max-width: 52ch;
+    margin: 12px auto 18px;
+}
+
+.announce-banner .secondary-btn {
+    margin: 0 auto;
+}
+
+/* ---------- Map info panel ---------- */
+.map-info {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    background: white;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    width: 260px;
+    z-index: 5;
+}
+
+.map-info h4 {
+    margin: 0 0 4px;
+    font-size: 1.1rem;
+    color: var(--ink);
+}
+
+.map-info p {
+    margin: 2px 0;
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+}

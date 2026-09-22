@@ -26,50 +26,82 @@
 
     <div class="map-panel">
         <div class="map-surface" style="height:440px; min-height:440px; background:#EFF4F5;">
-            @* Drawn backdrop: parks, plaza, river, city blocks and streets (no external map services) *@
-            <div style="position:absolute; top:14%; left:64%; width:28%; height:20%; background:#CDE5CF; border-radius:10px;"></div>
-            <div style="position:absolute; top:56%; left:12%; width:20%; height:32%; background:#EAF4FB; border-radius:10px;"></div>
-            <div style="position:absolute; top:5%; left:5%; width:12%; height:9%; background:#D8EED9; border-radius:6px;"></div>
-            <div style="position:absolute; top:44%; left:46%; width:13%; height:11%; background:#FDF1E7; border-radius:8px;"></div>
-            <span style="position:absolute; top:47%; left:50%; transform:translateX(-50%); font-size:8px; color:#B98A63; font-style:italic;">Plaza</span>
 
-            @* City blocks (cartilla de ciudad) *@
+            @* ── Cerros Orientales (east edge) ── *@
+            <div style="position:absolute; top:0; right:0; width:8%; height:100%; background:#CDE5CF; border-radius:10px 0 0 10px;"></div>
+            <span style="position:absolute; top:4%; right:1%; font-size:7px; color:#6B9E76; font-style:italic; writing-mode:vertical-rl; text-orientation:mixed; letter-spacing:0.08em;">Cerros Orientales</span>
+            <span style="position:absolute; top:14%; right:9.5%; font-size:10px;">⛰️</span>
+            <span style="position:absolute; top:13.5%; right:1%; font-size:7px; color:#5A7A60; font-style:italic;">Monserrate</span>
+            <span style="position:absolute; top:36%; right:9.5%; font-size:10px;">⛰️</span>
+            <span style="position:absolute; top:35.5%; right:1%; font-size:7px; color:#5A7A60; font-style:italic;">Guadalupe</span>
+
+            @* ── Río Bogotá (west edge) ── *@
+            <div style="position:absolute; top:0; left:4%; width:3.5%; height:100%; background:#DDEEFB; border-radius:6px;"></div>
+            <span style="position:absolute; top:48%; left:3%; font-size:7px; color:#7FB3D3; font-style:italic; writing-mode:vertical-rl; text-orientation:mixed;">Río Bogotá</span>
+
+            @* ── Parque Simón Bolívar (north-west) ── *@
+            <div style="position:absolute; top:5%; left:8%; width:18%; height:16%; background:#CDE5CF; border-radius:10px;"></div>
+            <span style="position:absolute; top:10%; left:11%; font-size:8px; color:#5A7A60; font-style:italic; font-weight:600;">Parque Simón Bolívar</span>
+
+            @* ── Aeropuerto El Dorado (west center) ── *@
+            <div style="position:absolute; top:32%; left:8%; width:14%; height:14%; background:#E2ECF1; border-radius:10px;"></div>
+            <div style="position:absolute; top:38%; left:10%; width:10%; height:3%; background:rgba(255,255,255,0.65); border-radius:2px;"></div>
+            <span style="position:absolute; top:34%; left:10%; font-size:7px; color:#6A8A9A; font-style:italic; font-weight:600;">Aeropuerto El Dorado</span>
+
+            @* ── Parque El Tunal (south center) ── *@
+            <div style="position:absolute; top:78%; left:30%; width:12%; height:9%; background:#D8EED9; border-radius:8px;"></div>
+            <span style="position:absolute; top:81%; left:32%; font-size:8px; color:#5A7A60; font-style:italic;">Parque El Tunal</span>
+
+            @* ── Plaza de Bolívar / La Candelaria (center-south) ── *@
+            <div style="position:absolute; top:52%; left:36%; width:12%; height:10%; background:#FDF1E7; border-radius:8px;"></div>
+            <span style="position:absolute; top:54%; left:37%; font-size:8px; color:#B98A63; font-style:italic; font-weight:600;">La Candelaria</span>
+            <span style="position:absolute; top:57%; left:37%; font-size:7px; color:#B98A63; font-style:italic;">Plaza de Bolívar</span>
+
+            @* ── City blocks ── *@
             @foreach (var s in BlockStyles)
             {
                 <div style="position:absolute; background:#F7F8FA; border-radius:2px; @s"></div>
             }
 
-            @* Horizontal streets *@
-            <div style="position:absolute; top:20%; left:0; width:100%; height:8px; background:#fff;"></div>
-            <span style="position:absolute; top:20%; left:10px; font-size:10px; color:#9AA6AD; font-style:italic;">Calle 63</span>
-            <div style="position:absolute; top:42%; left:0; width:100%; height:8px; background:#fff;"></div>
-            <span style="position:absolute; top:42%; left:10px; font-size:10px; color:#9AA6AD; font-style:italic;">Calle 45</span>
-            <div style="position:absolute; top:64%; left:0; width:100%; height:8px; background:#fff;"></div>
-            <span style="position:absolute; top:64%; left:10px; font-size:10px; color:#9AA6AD; font-style:italic;">Calle 26</span>
-            <div style="position:absolute; top:86%; left:0; width:100%; height:8px; background:#fff;"></div>
-            <span style="position:absolute; top:86%; left:10px; font-size:10px; color:#9AA6AD; font-style:italic;">Calle 13</span>
+            @* ── Horizontal streets ── *@
+            <div style="position:absolute; top:16%; left:0; width:92%; height:8px; background:#fff;"></div>
+            <span style="position:absolute; top:16%; left:10px; font-size:10px; color:#9AA6AD; font-style:italic;">Calle 100</span>
+            <div style="position:absolute; top:28%; left:0; width:92%; height:8px; background:#fff;"></div>
+            <span style="position:absolute; top:28%; left:10px; font-size:10px; color:#9AA6AD; font-style:italic;">Calle 72</span>
+            <div style="position:absolute; top:44%; left:0; width:92%; height:8px; background:#fff;"></div>
+            <span style="position:absolute; top:44%; left:10px; font-size:10px; color:#9AA6AD; font-style:italic;">Calle 63</span>
+            <div style="position:absolute; top:56%; left:0; width:92%; height:8px; background:#fff;"></div>
+            <span style="position:absolute; top:56%; left:10px; font-size:10px; color:#9AA6AD; font-style:italic;">Calle 45</span>
+            <div style="position:absolute; top:68%; left:0; width:92%; height:8px; background:#fff;"></div>
+            <span style="position:absolute; top:68%; left:10px; font-size:10px; color:#9AA6AD; font-style:italic;">Calle 26</span>
+            <div style="position:absolute; top:84%; left:0; width:92%; height:8px; background:#fff;"></div>
+            <span style="position:absolute; top:84%; left:10px; font-size:10px; color:#9AA6AD; font-style:italic;">Calle 13</span>
 
-            @* Vertical avenues *@
-            <div style="position:absolute; left:22%; top:0; width:8px; height:100%; background:#fff;"></div>
-            <span style="position:absolute; left:22%; top:8px; font-size:10px; color:#9AA6AD; font-style:italic; white-space:nowrap;">Av. Caracas</span>
-            <div style="position:absolute; left:46%; top:0; width:8px; height:100%; background:#fff;"></div>
-            <span style="position:absolute; left:46%; top:8px; font-size:10px; color:#9AA6AD; font-style:italic; white-space:nowrap;">Cra 7</span>
-            <div style="position:absolute; left:70%; top:0; width:8px; height:100%; background:#fff;"></div>
-            <span style="position:absolute; left:70%; top:8px; font-size:10px; color:#9AA6AD; font-style:italic; white-space:nowrap;">Cra 13</span>
-            <div style="position:absolute; left:90%; top:0; width:8px; height:100%; background:#fff;"></div>
-            <span style="position:absolute; left:90%; top:8px; font-size:10px; color:#9AA6AD; font-style:italic; white-space:nowrap;">Av. 68</span>
+            @* ── Vertical avenues ── *@
+            <div style="position:absolute; left:24%; top:0; width:8px; height:100%; background:#fff;"></div>
+            <span style="position:absolute; left:24%; top:8px; font-size:10px; color:#9AA6AD; font-style:italic; white-space:nowrap;">Av. Caracas</span>
+            <div style="position:absolute; left:32%; top:0; width:8px; height:100%; background:#fff;"></div>
+            <span style="position:absolute; left:32%; top:8px; font-size:10px; color:#9AA6AD; font-style:italic; white-space:nowrap;">NQS</span>
+            <div style="position:absolute; left:48%; top:0; width:8px; height:100%; background:#fff;"></div>
+            <span style="position:absolute; left:48%; top:8px; font-size:10px; color:#9AA6AD; font-style:italic; white-space:nowrap;">Cra 7</span>
+            <div style="position:absolute; left:58%; top:0; width:8px; height:100%; background:#fff;"></div>
+            <span style="position:absolute; left:58%; top:8px; font-size:10px; color:#9AA6AD; font-style:italic; white-space:nowrap;">Av. Boyacá</span>
+            <div style="position:absolute; left:72%; top:0; width:8px; height:100%; background:#fff;"></div>
+            <span style="position:absolute; left:72%; top:8px; font-size:10px; color:#9AA6AD; font-style:italic; white-space:nowrap;">Cra 13</span>
+            <div style="position:absolute; left:88%; top:0; width:8px; height:100%; background:#fff;"></div>
+            <span style="position:absolute; left:88%; top:8px; font-size:10px; color:#9AA6AD; font-style:italic; white-space:nowrap;">Av. 68</span>
 
-            @* Diagonal streets (rotated white bands) *@
+            @* ── Diagonal streets ── *@
             <div style="position:absolute; top:30%; left:-10%; width:120%; height:8px; background:#fff; transform:rotate(30deg);"></div>
             <span style="position:absolute; top:26%; left:12%; font-size:10px; color:#9AA6AD; font-style:italic; transform:rotate(30deg); transform-origin:left center;">Diag. 50</span>
             <div style="position:absolute; top:62%; left:-10%; width:120%; height:8px; background:#fff; transform:rotate(-30deg);"></div>
             <span style="position:absolute; top:66%; left:70%; font-size:10px; color:#9AA6AD; font-style:italic; transform:rotate(-30deg); transform-origin:left center;">Av. Jiménez</span>
 
-            @* Pins projected with the same lat/lon -> % box as MAUI *@
+            @* ── Pins projected with the same lat/lon → % box as MAUI *@
             @foreach (var pet in FilteredPets)
             {
-                var left = Clamp(LonToLeft(pet.Longitude), 2, 98);
-                var top = Clamp(LatToTop(pet.Latitude), 2, 98);
+                var left = Fmt(Clamp(LonToLeft(pet.Longitude), 2, 98));
+                var top = Fmt(Clamp(LatToTop(pet.Latitude), 2, 98));
                 var isCat = IsCat(pet);
                 var selected = selectedPet?.Id == pet.Id;
                 var pinColor = selected ? "var(--primary-dark)" : (isCat ? "#E8A33D" : "#F26A4B");
@@ -85,9 +117,9 @@
 
             @if (selectedPet is not null)
             {
-                <div class="map-info" style="position:absolute; right:12px; bottom:12px; background:white; padding:12px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.08); width:260px; z-index:5;">
+                <div class="map-info">
                     <h4>@selectedPet.Name</h4>
-                    <p>@selectedPet.Species - @selectedPet.Breed</p>
+                    <p>@selectedPet.Species · @selectedPet.Breed</p>
                     <p class="location">📍 @selectedPet.Location</p>
                     <div style="display:flex; gap:8px; margin-top:8px;">
                         <button class="primary-btn" @onclick="() => NavigateToPet(selectedPet)">Ver detalle</button>
@@ -141,6 +173,17 @@
     private const double LonMin = MiHuellitas.shared.Data.MockData.LON_MIN;
     private const double LonMax = MiHuellitas.shared.Data.MockData.LON_MAX;
 
+    // Street grid (keep in sync with MapPage.cs)
+    private static readonly double[] HStreets = { 0.16, 0.28, 0.44, 0.56, 0.68, 0.84 };
+    private static readonly double[] VStreets = { 0.24, 0.32, 0.48, 0.58, 0.72, 0.88 };
+
+    // Landmark rectangles (keep in sync with MapPage.cs)
+    private static readonly double[] ParkSB   = { 0.05, 0.08, 0.18, 0.16 };
+    private static readonly double[] Airport   = { 0.32, 0.08, 0.14, 0.14 };
+    private static readonly double[] Cerros    = { 0.00, 0.92, 1.00, 0.08 };
+    private static readonly double[] LaCandelaria = { 0.52, 0.36, 0.10, 0.12 };
+    private static readonly double[] ParkTunal = { 0.78, 0.30, 0.09, 0.12 };
+
     private IEnumerable<MiHuellitas.shared.Models.Pet> FilteredPets =>
         Catalog.Pets
             .Where(p => string.IsNullOrEmpty(speciesFilter) || SpeciesKey(p) == speciesFilter)
@@ -153,33 +196,37 @@
 
     private void InitBlocks()
     {
-        double[][] rows = { new[] { 0.22, 0.42 }, new[] { 0.44, 0.64 }, new[] { 0.66, 0.86 } };
-        double[][] cols = { new[] { 0.238, 0.46 }, new[] { 0.478, 0.70 }, new[] { 0.718, 0.90 } };
-        foreach (var row in rows)
+        double[] hBorders = { 0.00, 0.16, 0.28, 0.44, 0.56, 0.68, 0.84, 0.92 };
+        double[] vBorders = { 0.00, 0.24, 0.32, 0.48, 0.58, 0.72, 0.88, 0.92 };
+        for (int r = 0; r < hBorders.Length - 1; r++)
         {
-            double rTop = row[0], rBot = row[1];
-            foreach (var col in cols)
+            for (int c = 0; c < vBorders.Length - 1; c++)
             {
-                double cLeft = col[0], cRight = col[1];
-                double top = rTop + (rBot - rTop) * 0.25;
-                double h = (rBot - rTop) * 0.5;
-                double w = (cRight - cLeft) * 0.42;
-                BlockStyles.Add($"left:{(cLeft + (cRight - cLeft) * 0.06) * 100:0.#}%; top:{top * 100:0.#}%; width:{w * 100:0.#}%; height:{h * 100:0.#}%;");
-                BlockStyles.Add($"left:{(cLeft + (cRight - cLeft) * 0.52) * 100:0.#}%; top:{top * 100:0.#}%; width:{w * 100:0.#}%; height:{h * 100:0.#}%;");
+                double bTop = hBorders[r], bBot = hBorders[r + 1];
+                double bLeft = vBorders[c], bRight = vBorders[c + 1];
+                if (Overlap(bTop, bBot, bLeft, bRight, ParkSB)) continue;
+                if (Overlap(bTop, bBot, bLeft, bRight, Airport)) continue;
+                if (Overlap(bTop, bBot, bLeft, bRight, Cerros)) continue;
+                if (Overlap(bTop, bBot, bLeft, bRight, LaCandelaria)) continue;
+                if (Overlap(bTop, bBot, bLeft, bRight, ParkTunal)) continue;
+                double inset = 0.01;
+                double w = (bRight - bLeft) - inset * 2;
+                double h = (bBot - bTop) - inset * 2;
+                if (w > 0.01 && h > 0.01)
+                    BlockStyles.Add($"left:{(bLeft + inset) * 100:0.#}%; top:{(bTop + inset) * 100:0.#}%; width:{w * 100:0.#}%; height:{h * 100:0.#}%;");
             }
         }
     }
 
+    private static bool Overlap(double t, double b, double l, double r, double[] zone) =>
+        t < zone[0] + zone[2] && b > zone[0] && l < zone[1] + zone[3] && r > zone[1];
+
     private void SelectPet(MiHuellitas.shared.Models.Pet pet)
     {
         if (selectedPet?.Id != pet.Id)
-        {
             selectedPet = pet;
-        }
         else
-        {
             selectedPet = null;
-        }
         _ = JS.InvokeVoidAsync("miHuellitasFocusRow", $"map-row-{pet.Id}");
     }
 
@@ -205,10 +252,11 @@
 
     private static string SpeciesKey(MiHuellitas.shared.Models.Pet p) => IsCat(p) ? "Gato" : "Perro";
 
-    // Project (lat, lon) -> percentage of the surface, using the SAME Bogotá box
-    // as the MAUI map so pins land in equivalent positions.
     private static double LatToTop(double lat) => (LatMax - lat) / (LatMax - LatMin) * 100;
     private static double LonToLeft(double lon) => (lon - LonMin) / (LonMax - LonMin) * 100;
 
     private static double Clamp(double value, double min, double max) => Math.Clamp(value, min, max);
+
+    private static string Fmt(double value) =>
+        value.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
 }

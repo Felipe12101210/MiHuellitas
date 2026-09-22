@@ -12,16 +12,19 @@ public static class MockData
     public const double LON_MIN = -74.15;
     public const double LON_MAX = -74.05;
 
-    // Deterministic, non-overlapping coordinates per pet Id, spread as a grid
-    // with padding so pins stay inside the drawn surface.
+    // Coordinates per pet mapped to Bogotá localities.
     private static (double Lat, double Lon) PetCoords(int id)
     {
-        int index = id - 1;
-        double fx = index % 3 / 2.0;
-        double fy = index / 3 / 2.0;
-        double lat = LAT_MAX - (0.18 + 0.64 * fy) * (LAT_MAX - LAT_MIN);
-        double lon = LON_MIN + (0.18 + 0.64 * fx) * (LON_MAX - LON_MIN);
-        return (Math.Round(lat, 5), Math.Round(lon, 5));
+        return id switch
+        {
+            1 => (4.70, -74.08),  // Luna — Usaquén
+            2 => (4.67, -74.08),  // Milo — Chapinero
+            3 => (4.60, -74.08),  // Nala — La Candelaria
+            4 => (4.60, -74.13),  // Robin — Kennedy
+            5 => (4.70, -74.12),  // Kira — Suba
+            6 => (4.67, -74.12),  // Toby — Fontibón
+            _ => (4.65, -74.10)
+        };
     }
 
     public static List<Foundation> Foundations { get; } =
@@ -42,7 +45,7 @@ public static class MockData
             Id = 2,
             Name = "Rescate Vivo",
             Description = "Fundación dedicada a rescates urbanos, campañas de esterilización y rehabilitación animal.",
-            Location = "Medellín, Colombia",
+            Location = "Engativá, Bogotá",
             ContactPhone = "+57 320 998 1122",
             Email = "contacto@rescatevivo.org",
             LogoUrl = "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=400&q=80",
@@ -53,7 +56,7 @@ public static class MockData
             Id = 3,
             Name = "Casa Sin Huellas",
             Description = "Centro de apoyo temporal sin registro de mascotas actualmente.",
-            Location = "Cali, Colombia",
+            Location = "Teusaquillo, Bogotá",
             ContactPhone = "+57 320 000 0000",
             Email = "contacto@casasinhuellas.org",
             LogoUrl = "https://images.unsplash.com/photo-1543872084-c7bd3822856f?auto=format&fit=crop&w=400&q=80",
@@ -135,7 +138,7 @@ public static class MockData
             AgeMonths = 30,
             Sex = "Macho",
             Size = "Grande",
-            Location = "El Poblado, Medellín",
+            Location = "Kennedy, Bogotá",
             Latitude = PetCoords(4).Lat,
             Longitude = PetCoords(4).Lon,
             Description = "Fue encontrado cerca de una universidad y aún necesita una familia responsable.",
@@ -177,7 +180,7 @@ public static class MockData
             AgeMonths = 24,
             Sex = "Macho",
             Size = "Pequeño",
-            Location = "Envigado, Antioquia",
+            Location = "Fontibón, Bogotá",
             Latitude = PetCoords(6).Lat,
             Longitude = PetCoords(6).Lon,
             Description = "Se reportó como perdido por una familia con bebés; responder a cualquier aviso.",
@@ -210,7 +213,7 @@ public static class MockData
             Title = "Esterilización comunitaria",
             Description = "Programa gratuito para reducir la reproducción irresponsable y mejorar la salud animal.",
             ImageUrl = "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=900&q=80",
-            Location = "Medellín, Antioquia",
+            Location = "Kennedy, Bogotá",
             EventDate = DateTime.UtcNow.AddDays(20),
             Organizer = "Rescate Vivo",
             Status = "Próximo"

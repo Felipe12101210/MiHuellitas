@@ -56,6 +56,17 @@ public class HomePage : ContentPage
         var s3 = StatBox("96%", "Seguimiento"); stats.Children.Add(s3); Grid.SetColumn(s3, 3); Grid.SetRow(s3, 0);
         root.Children.Add(stats);
 
+        // Announce banner — coming soon
+        var announce = new Border { Padding = new Thickness(20), StrokeThickness = 0, BackgroundColor = (Color)Application.Current!.Resources["SurfaceSoft"] };
+        var announceInner = new VerticalStackLayout { Spacing = 8, HorizontalOptions = LayoutOptions.Center };
+        announceInner.Children.Add(new Label { Text = "Próximamente", Style = Res("Eyebrow"), HorizontalOptions = LayoutOptions.Center });
+        announceInner.Children.Add(new Label { Text = "Veterinarias y productos destacados", FontSize = 20, FontAttributes = FontAttributes.Bold, HorizontalOptions = LayoutOptions.Center });
+        announceInner.Children.Add(new Label { Text = "Veterinarias aliadas y productos destacados para tu mascota en Bogotá. Muy pronto.", Style = Res("MutedText"), HorizontalOptions = LayoutOptions.Center });
+        var announceBtn = new Button { Text = "Próximamente", Style = Res("SecondaryButton"), IsEnabled = false };
+        announceInner.Children.Add(announceBtn);
+        announce.Content = announceInner;
+        root.Children.Add(announce);
+
         // Quick actions
         root.Children.Add(new Label { Text = "Qué puedes hacer hoy", Style = Res("SectionTitle") });
         var actions = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition(), new ColumnDefinition() }, RowSpacing = 8, ColumnSpacing = 8 };
